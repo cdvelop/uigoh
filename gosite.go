@@ -1,5 +1,5 @@
 
-package uigoh
+package gosite
 
 import (
 	"github.com/cdvelop/uigoh/components"
