@@ -1,47 +1,38 @@
 
 package components
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
-type CardConfig struct {
-    Title       string
-    Description string
-    Icon        string
-    CSSClass    string
+// Card implements the Component interface for a card.
+type Card struct {
+	Title       string
+	Description string
+	Icon        string
+	CSSClass    string
 }
 
-// RenderHTML returns the card HTML structure
-func (c *CardConfig) RenderHTML() string {
-    var b strings.Builder
-
-    b.WriteString("<div class=\"card")
-    if c.CSSClass != "" {
-        b.WriteString(" ")
-        b.WriteString(c.CSSClass)
-    }
-    b.WriteString("\">\n")
-
-    if c.Icon != "" {
-        b.WriteString("  <svg class=\"icon\"><use href=\"icons.svg#")
-        b.WriteString(c.Icon)
-        b.WriteString("\"></use></svg>\n")
-    }
-
-    b.WriteString("  <h3>")
-    b.WriteString(escapeHTML(c.Title))
-    b.WriteString("</h3>\n")
-
-    b.WriteString("  <p>")
-    b.WriteString(escapeHTML(c.Description))
-    b.WriteString("</p>\n")
-
-    b.WriteString("</div>\n")
-
-    return b.String()
+// RenderHTML generates the HTML for the card.
+func (c *Card) RenderHTML() string {
+	var b strings.Builder
+	class := "card"
+	if c.CSSClass != "" {
+		class += " " + c.CSSClass
+	}
+	fmt.Fprintf(&b, "<div class=\"%s\">\n", escapeAttr(class))
+	if c.Icon != "" {
+		fmt.Fprintf(&b, "  <svg class=\"icon\"><use href=\"icons.svg#%s\"></use></svg>\n", escapeAttr(c.Icon))
+	}
+	fmt.Fprintf(&b, "  <h3>%s</h3>\n", escapeHTML(c.Title))
+	fmt.Fprintf(&b, "  <p>%s</p>\n", escapeHTML(c.Description))
+	b.WriteString("</div>\n")
+	return b.String()
 }
 
-// RenderCSS returns the card CSS styles
-func (c *CardConfig) RenderCSS() string {
+// RenderCSS returns the CSS for the card.
+func (c *Card) RenderCSS() string {
     return `.card {
   border: 1px solid var(--color-border);
   border-radius: 8px;
@@ -73,8 +64,7 @@ func (c *CardConfig) RenderCSS() string {
 `
 }
 
-// RenderJS returns the card JavaScript (if needed)
-func (c *CardConfig) RenderJS() string {
-    // Most components won't need JS
-    return ""
+// RenderJS returns the JavaScript for the card (empty in this case).
+func (c *Card) RenderJS() string {
+	return ""
 }
