@@ -8,7 +8,6 @@ import (
 	"encoding/hex"
 
 	"github.com/cdvelop/gosite/components"
-	"github.com/cdvelop/gosite/util"
 	"github.com/cdvelop/tinystrings"
 )
 
@@ -62,9 +61,9 @@ func (s *Site) BuildNav() string {
 	b.WriteString("<nav class=\"main-nav\">\n")
 	for _, page := range s.pages {
 		b.WriteString("  <a href=\"")
-		b.WriteString(util.EscapeAttr(page.Filename))
+		b.WriteString(tinystrings.EscapeAttr(page.Filename))
 		b.WriteString("\" class=\"nav-link\">")
-		b.WriteString(util.EscapeHTML(page.Title))
+		b.WriteString(tinystrings.EscapeHTML(page.Title))
 		b.WriteString("</a>\n")
 	}
 	b.WriteString("</nav>\n")

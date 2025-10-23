@@ -2,7 +2,6 @@
 package components
 
 import (
-	"github.com/cdvelop/gosite/util"
 	"github.com/cdvelop/tinystrings"
 )
 
@@ -40,9 +39,9 @@ func (p *Page) RenderHTML() string {
 	b.WriteString("<html lang=\"es\">\n")
 	b.WriteString("<head>\n")
 	b.WriteString("  <meta charset=\"UTF-8\">\n")
-	b.WriteString("  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n")
+	b.WriteString("  <meta name=\"viewport\" content=\"width=device-width, initial-scale-1.0\">\n")
 	b.WriteString("  <title>")
-	b.WriteString(util.EscapeHTML(p.Title))
+	b.WriteString(tinystrings.EscapeHTML(p.Title))
 	b.WriteString("</title>\n")
 	b.WriteString("  <link rel=\"stylesheet\" href=\"style.css\">\n")
 

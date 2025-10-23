@@ -2,7 +2,6 @@
 package components
 
 import (
-	"github.com/cdvelop/gosite/util"
 	"github.com/cdvelop/tinystrings"
 )
 
@@ -22,20 +21,20 @@ func (c *Card) RenderHTML() string {
 		class += " " + c.CSSClass
 	}
 	b.WriteString("<div class=\"")
-	b.WriteString(util.EscapeAttr(class))
+	b.WriteString(tinystrings.EscapeAttr(class))
 	b.WriteString("\">\n")
 
 	if c.Icon != "" {
 		b.WriteString("  <svg class=\"icon\"><use href=\"icons.svg#")
-		b.WriteString(util.EscapeAttr(c.Icon))
+		b.WriteString(tinystrings.EscapeAttr(c.Icon))
 		b.WriteString("\"></use></svg>\n")
 	}
 	b.WriteString("  <h3>")
-	b.WriteString(util.EscapeHTML(c.Title))
+	b.WriteString(tinystrings.EscapeHTML(c.Title))
 	b.WriteString("</h3>\n")
 
 	b.WriteString("  <p>")
-	b.WriteString(util.EscapeHTML(c.Description))
+	b.WriteString(tinystrings.EscapeHTML(c.Description))
 	b.WriteString("</p>\n")
 
 	b.WriteString("</div>\n")
