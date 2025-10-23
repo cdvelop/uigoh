@@ -1,100 +1,90 @@
 
 package components
 
-import "strings"
+import (
+	"strings"
+)
 
+// Page represents a single HTML page and is the root of the site structure.
 type Page struct {
-    title      string
-    filename   string            // e.g., "services.html", "contact.html"
-    sections   []*SectionBuilder // Sections within this page
-    rawContent []string          // For SPA sections
-    navigation string            // Pre-rendered navigation (set by Site)
-    site       *Site             // Back-reference to site
-    head       []string          // Additional <head> content
+	site     *site
+	sections []*SectionBuilder
+	Title    string
+	Filename string
+	Head     []string
 }
 
-func NewPage(title string) *Page {
-    return &Page{
-        title:      title,
-        sections:   make([]*SectionBuilder, 0),
-        rawContent: make([]string, 0),
-        head:       make([]string, 0),
-    }
+// NewPage creates a new site and returns the root page.
+func NewPage(cfg *Config) *Page {
+	s := newSite(cfg)
+	p := &Page{
+		site:     s,
+		Title:    cfg.Title,
+		Filename: "index.html", // Default filename for the root page
+	}
+	s.AddPage(p) // Register the root page
+	return p
 }
 
-// Section creates a section within THIS page
-// Automatically adds section to page - NO need for AddSection()
-func (p *Page) Section(title string) *SectionBuilder {
-    section := p.site.Section(title)
-    section.page = p
-
-    // Auto-add section to page
-    p.sections = append(p.sections, section)
-
-    // Auto-accumulate section CSS to site
-    p.site.AddCSS(section.RenderCSS())
-
-    return section
+// NewSection adds a new section to the page and returns a builder for it.
+func (p *Page) NewSection(title string) *SectionBuilder {
+	section := &SectionBuilder{
+		page:  p,
+		site:  p.site,
+		Title: title,
+	}
+	p.sections = append(p.sections, section)
+	return section
 }
 
-// AddRawSection adds raw HTML section content to page
-// Used by Site.AddSection() for SPA sections
-func (p *Page) AddRawSection(html string) {
-    p.rawContent = append(p.rawContent, html)
-}
-
-// AddHead adds content to <head> section
+// AddHead adds content to the <head> section of the page.
 func (p *Page) AddHead(content string) *Page {
-    p.head = append(p.head, content)
-    return p
+	p.Head = append(p.Head, content)
+	return p
 }
 
-// RenderHTML generates the complete HTML page
+// Generate builds the entire site, including all pages, CSS, and JS.
+func (p *Page) Generate() error {
+	return p.site.Generate()
+}
+
+// RenderHTML generates the complete HTML for the page.
 func (p *Page) RenderHTML() string {
-    var b strings.Builder
+	var b strings.Builder
 
-    b.WriteString("<!DOCTYPE html>\n")
-    b.WriteString("<html lang=\"es\">\n")
-    b.WriteString("<head>\n")
-    b.WriteString("  <meta charset=\"UTF-8\">\n")
-    b.WriteString("  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n")
-    b.WriteString("  <title>")
-    b.WriteString(escapeHTML(p.title))
-    b.WriteString("</title>\n")
-    b.WriteString("  <link rel=\"stylesheet\" href=\"style.css\">\n")
+	b.WriteString("<!DOCTYPE html>\n")
+	b.WriteString("<html lang=\"es\">\n")
+	b.WriteString("<head>\n")
+	b.WriteString("  <meta charset=\"UTF-8\">\n")
+	b.WriteString("  <meta name=\"viewport\" content=\"width=device-width, initial-scale-1.0\">\n")
+	b.WriteString("  <title>")
+	b.WriteString(escapeHTML(p.Title))
+	b.WriteString("</title>\n")
+	b.WriteString("  <link rel=\"stylesheet\" href=\"style.css\">\n")
 
-    // Additional head content
-    for _, h := range p.head {
-        b.WriteString("  ")
-        b.WriteString(h)
-        b.WriteString("\n")
-    }
+	for _, h := range p.Head {
+		b.WriteString("  ")
+		b.WriteString(h)
+		b.WriteString("\n")
+	}
 
-    b.WriteString("</head>\n")
-    b.WriteString("<body>\n")
+	b.WriteString("</head>\n")
+	b.WriteString("<body>\n")
 
-    // Navigation (set by Site.buildCombinedNav)
-    if p.navigation != "" {
-        b.WriteString(p.navigation)
-    }
+	// Render navigation if any pages are registered
+	if len(p.site.pages) > 1 {
+		b.WriteString(p.site.buildCombinedNav())
+	}
 
-    b.WriteString("  <main class=\"content\">\n")
+	b.WriteString("  <main class=\"content\">\n")
+	for _, section := range p.sections {
+		b.WriteString(section.Render())
+	}
+	b.WriteString("  </main>\n")
 
-    // Render all sections from builders
-    for _, section := range p.sections {
-        b.WriteString(section.Render())
-    }
+	b.WriteString("  <script src=\"main.js\"></script>\n")
+	b.WriteString("</body>\n")
+	b.WriteString("</html>\n")
 
-    // Render raw HTML sections for SPA
-    for _, raw := range p.rawContent {
-        b.WriteString(raw)
-    }
-
-    b.WriteString("  </main>\n")
-
-    b.WriteString("  <script src=\"main.js\"></script>\n")
-    b.WriteString("</body>\n")
-    b.WriteString("</html>\n")
-
-    return b.String()
+	return b.String()
 }

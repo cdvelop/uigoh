@@ -1,67 +1,49 @@
 
 package components
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
+// FormField defines a single field within a form.
 type FormField struct {
-    Type        string // text, email, textarea
-    Name        string
-    Placeholder string
-    Required    bool
+	Type        string
+	Name        string
+	Placeholder string
+	Required    bool
 }
 
+// FormConfig holds the configuration for a form.
 type FormConfig struct {
-    Action string
-    Method string
-    Fields []FormField
+	Action string
+	Method string
+	Fields []FormField
 }
 
-type FormBuilder struct {
-    Config FormConfig
+// Form implements the Component interface for a form.
+type Form struct {
+	Config FormConfig
 }
 
-func (f *FormBuilder) RenderHTML() string {
-    var b strings.Builder
-
-    b.WriteString("<form class=\"contact-form\" action=\"")
-    b.WriteString(escapeAttr(f.Config.Action))
-    b.WriteString("\" method=\"")
-    b.WriteString(f.Config.Method)
-    b.WriteString("\">\n")
-
-    for _, field := range f.Config.Fields {
-        if field.Type == "textarea" {
-            b.WriteString("  <textarea name=\"")
-            b.WriteString(escapeAttr(field.Name))
-            b.WriteString("\" placeholder=\"")
-            b.WriteString(escapeAttr(field.Placeholder))
-            b.WriteString("\"")
-            if field.Required {
-                b.WriteString(" required")
-            }
-            b.WriteString("></textarea>\n")
-        } else {
-            b.WriteString("  <input type=\"")
-            b.WriteString(field.Type)
-            b.WriteString("\" name=\"")
-            b.WriteString(escapeAttr(field.Name))
-            b.WriteString("\" placeholder=\"")
-            b.WriteString(escapeAttr(field.Placeholder))
-            b.WriteString("\"")
-            if field.Required {
-                b.WriteString(" required")
-            }
-            b.WriteString(">\n")
-        }
-    }
-
-    b.WriteString("  <button type=\"submit\">Enviar Mensaje</button>\n")
-    b.WriteString("</form>\n")
-
-    return b.String()
+// RenderHTML generates the HTML for the form.
+func (f *Form) RenderHTML() string {
+	var b strings.Builder
+	fmt.Fprintf(&b, "<form class=\"contact-form\" action=\"%s\" method=\"%s\">\n", escapeAttr(f.Config.Action), escapeAttr(f.Config.Method))
+	for _, field := range f.Config.Fields {
+		if field.Type == "textarea" {
+			fmt.Fprintf(&b, "  <textarea name=\"%s\" placeholder=\"%s\"%s></textarea>\n", escapeAttr(field.Name), escapeAttr(field.Placeholder), boolAttr("required", field.Required))
+		} else {
+			fmt.Fprintf(&b, "  <input type=\"%s\" name=\"%s\" placeholder=\"%s\"%s>\n", escapeAttr(field.Type), escapeAttr(field.Name), escapeAttr(field.Placeholder), boolAttr("required", field.Required))
+		}
+	}
+	b.WriteString("  <button type=\"submit\">Enviar Mensaje</button>\n")
+	b.WriteString("</form>\n")
+	return b.String()
 }
 
-func (f *FormBuilder) RenderCSS() string {
+// RenderCSS returns the CSS for the form.
+func (f *Form) RenderCSS() string {
     return `.contact-form {
   display: flex;
   flex-direction: column;
@@ -92,7 +74,8 @@ func (f *FormBuilder) RenderCSS() string {
 `
 }
 
-func (f *FormBuilder) RenderJS() string {
+// RenderJS returns the JavaScript for the form.
+func (f *Form) RenderJS() string {
     return `// Simple form validation
 document.addEventListener('DOMContentLoaded', function() {
     const forms = document.querySelectorAll('.contact-form');

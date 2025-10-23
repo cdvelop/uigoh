@@ -1,38 +1,35 @@
 
 package components
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
+// CarouselImage defines the structure for an image in a carousel.
 type CarouselImage struct {
-    Src string
-    Alt string
+	Src string
+	Alt string
 }
 
-type CarouselConfig struct {
-    Images []CarouselImage
+// Carousel implements the Component interface for a carousel.
+type Carousel struct {
+	Images []CarouselImage
 }
 
-func (c *CarouselConfig) RenderHTML() string {
-    var b strings.Builder
-
-    b.WriteString("<div class=\"carousel\">\n")
-
-    for _, img := range c.Images {
-        b.WriteString("  <div class=\"carousel-item\">\n")
-        b.WriteString("    <img src=\"")
-        b.WriteString(escapeAttr(img.Src))
-        b.WriteString("\" alt=\"")
-        b.WriteString(escapeAttr(img.Alt))
-        b.WriteString("\">\n")
-        b.WriteString("  </div>\n")
-    }
-
-    b.WriteString("</div>\n")
-
-    return b.String()
+// RenderHTML generates the HTML for the carousel.
+func (c *Carousel) RenderHTML() string {
+	var b strings.Builder
+	b.WriteString("<div class=\"carousel\">\n")
+	for _, img := range c.Images {
+		fmt.Fprintf(&b, "  <div class=\"carousel-item\"><img src=\"%s\" alt=\"%s\"></div>\n", escapeAttr(img.Src), escapeAttr(img.Alt))
+	}
+	b.WriteString("</div>\n")
+	return b.String()
 }
 
-func (c *CarouselConfig) RenderCSS() string {
+// RenderCSS returns the CSS for the carousel.
+func (c *Carousel) RenderCSS() string {
     return `.carousel {
   position: relative;
   width: 100%;
@@ -54,7 +51,8 @@ func (c *CarouselConfig) RenderCSS() string {
 `
 }
 
-func (c *CarouselConfig) RenderJS() string {
+// RenderJS returns the JavaScript for the carousel.
+func (c *Carousel) RenderJS() string {
     return `// Carousel auto-slide
 (function() {
     const carousel = document.querySelector('.carousel');
