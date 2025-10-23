@@ -4,28 +4,26 @@ package main
 import (
 	"log"
 
-	"github.com/cdvelop/uigoh"
-	"github.com/cdvelop/uigoh/components"
+	"github.com/cdvelop/gosite"
+	"github.com/cdvelop/gosite/components"
 )
 
 func main() {
 	// 1. Configure the site
-	cfg := &components.Config{
+	cfg := &gosite.Config{
 		Title:     "My Awesome Site",
 		OutputDir: "dist",
 	}
 
-	// 2. Create a new site; NewSite returns the root page (index.html)
-	page := uigoh.NewSite(cfg)
-	page.Title = "Home Page"
+	// 2. Create a new site
+	site := gosite.NewSite(cfg)
 
-	// 3. Add a head tag to the page
-	page.AddHead(`<meta name="description" content="Welcome to the awesome site!">`)
+	// 3. Create the home page
+	homePage := site.NewPage("Home Page", "index.html")
+	homePage.AddHead(`<meta name="description" content="Welcome to the awesome site!">`)
 
-	// 4. Create a new section on the root page
-	introSection := page.NewSection("Welcome to Our Website")
-
-	// 5. Add components to the section using the builder API
+	// 4. Add content to the home page
+	introSection := homePage.NewSection("Welcome to Our Website")
 	introSection.Add(&components.Card{
 		Title:       "Feature One",
 		Description: "This is a description for the first amazing feature.",
@@ -36,8 +34,16 @@ func main() {
 		Icon:        "icon-heart",
 	})
 
-	// 6. Add another section with a form
-	contactSection := page.NewSection("Contact Us")
+	// 5. Create the about page
+	aboutPage := site.NewPage("About Us", "about.html")
+	aboutPage.NewSection("About Our Company").Add(&components.Card{
+		Title:       "Our Mission",
+		Description: "To build the best and most awesome things.",
+	})
+
+	// 6. Create the contact page
+	contactPage := site.NewPage("Contact Us", "contact.html")
+	contactSection := contactPage.NewSection("Contact Us")
 	contactSection.Add(&components.Form{
 		Config: components.FormConfig{
 			Action: "/submit-form",
@@ -51,7 +57,7 @@ func main() {
 	})
 
 	// 7. Generate the site
-	if err := page.Generate(); err != nil {
+	if err := site.Generate(); err != nil {
 		log.Fatalf("Error generating site: %v", err)
 	}
 

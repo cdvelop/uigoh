@@ -2,8 +2,8 @@
 package components
 
 import (
-	"fmt"
-	"strings"
+	"github.com/cdvelop/gosite/util"
+	"github.com/cdvelop/tinystrings"
 )
 
 // Card implements the Component interface for a card.
@@ -16,17 +16,28 @@ type Card struct {
 
 // RenderHTML generates the HTML for the card.
 func (c *Card) RenderHTML() string {
-	var b strings.Builder
+	var b tinystrings.Builder
 	class := "card"
 	if c.CSSClass != "" {
 		class += " " + c.CSSClass
 	}
-	fmt.Fprintf(&b, "<div class=\"%s\">\n", escapeAttr(class))
+	b.WriteString("<div class=\"")
+	b.WriteString(util.EscapeAttr(class))
+	b.WriteString("\">\n")
+
 	if c.Icon != "" {
-		fmt.Fprintf(&b, "  <svg class=\"icon\"><use href=\"icons.svg#%s\"></use></svg>\n", escapeAttr(c.Icon))
+		b.WriteString("  <svg class=\"icon\"><use href=\"icons.svg#")
+		b.WriteString(util.EscapeAttr(c.Icon))
+		b.WriteString("\"></use></svg>\n")
 	}
-	fmt.Fprintf(&b, "  <h3>%s</h3>\n", escapeHTML(c.Title))
-	fmt.Fprintf(&b, "  <p>%s</p>\n", escapeHTML(c.Description))
+	b.WriteString("  <h3>")
+	b.WriteString(util.EscapeHTML(c.Title))
+	b.WriteString("</h3>\n")
+
+	b.WriteString("  <p>")
+	b.WriteString(util.EscapeHTML(c.Description))
+	b.WriteString("</p>\n")
+
 	b.WriteString("</div>\n")
 	return b.String()
 }

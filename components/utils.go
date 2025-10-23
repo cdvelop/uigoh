@@ -7,10 +7,6 @@ import (
 	"html"
 )
 
-func escapeHTML(s string) string {
-	return html.EscapeString(s)
-}
-
 func escapeAttr(s string) string {
 	return html.EscapeString(s)
 }
