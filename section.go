@@ -1,13 +1,12 @@
-
-package components
+package gosite
 
 import (
-	"github.com/cdvelop/tinystrings"
+	. "github.com/cdvelop/tinystring"
 )
 
 // SectionBuilder handles the construction of a page section.
 type SectionBuilder struct {
-	page     *Page
+	page     *page
 	site     SiteLink
 	Title    string
 	ModuleID string
@@ -31,27 +30,27 @@ func (s *SectionBuilder) Add(component Component) *SectionBuilder {
 
 // Render generates the section's HTML.
 func (s *SectionBuilder) Render() string {
-	var b tinystrings.Builder
+	var b = Convert()
 	id := s.ModuleID
 	if id == "" {
-		id = tinystrings.ToLower(tinystrings.ReplaceAll(s.Title, " ", "-"))
+		id = Convert(s.Title).ToLower().Replace(" ", "-").String()
 	}
-	b.WriteString("<section id=\"")
-	b.WriteString(tinystrings.EscapeAttr(id))
-	b.WriteString("\" class=\"page\">\n")
+	b.Write("<section id=\"")
+	b.Write(Convert(id).EscapeAttr())
+	b.Write("\" class=\"page\">\n")
 
 	if s.Title != "" {
-		b.WriteString("  <h1>")
-		b.WriteString(tinystrings.EscapeHTML(s.Title))
-		b.WriteString("</h1>\n")
+		b.Write("  <h1>")
+		b.Write(Convert(s.Title).EscapeHTML())
+		b.Write("</h1>\n")
 	}
-	b.WriteString("  <div class=\"card-container\">\n")
+	b.Write("  <div class=\"card-container\">\n")
 	for _, item := range s.content {
-		b.WriteString("    ")
-		b.WriteString(item.RenderHTML())
-		b.WriteString("\n")
+		b.Write("    ")
+		b.Write(item.RenderHTML())
+		b.Write("\n")
 	}
-	b.WriteString("  </div>\n")
-	b.WriteString("</section>\n")
+	b.Write("  </div>\n")
+	b.Write("</section>\n")
 	return b.String()
 }

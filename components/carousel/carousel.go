@@ -1,9 +1,7 @@
-
-package components
+package carousel
 
 import (
-	"fmt"
-	"strings"
+	. "github.com/cdvelop/tinystring"
 )
 
 // CarouselImage defines the structure for an image in a carousel.
@@ -19,18 +17,22 @@ type Carousel struct {
 
 // RenderHTML generates the HTML for the carousel.
 func (c *Carousel) RenderHTML() string {
-	var b strings.Builder
-	b.WriteString("<div class=\"carousel\">\n")
+	var b = Convert()
+	b.Write("<div class=\"carousel\">\n")
 	for _, img := range c.Images {
-		fmt.Fprintf(&b, "  <div class=\"carousel-item\"><img src=\"%s\" alt=\"%s\"></div>\n", escapeAttr(img.Src), escapeAttr(img.Alt))
+		b.Write("  <div class=\"carousel-item\"><img src=\"")
+		b.Write(Convert(img.Src).EscapeAttr())
+		b.Write("\" alt=\"")
+		b.Write(Convert(img.Alt).EscapeAttr())
+		b.Write("\"></div>\n")
 	}
-	b.WriteString("</div>\n")
+	b.Write("</div>\n")
 	return b.String()
 }
 
 // RenderCSS returns the CSS for the carousel.
 func (c *Carousel) RenderCSS() string {
-    return `.carousel {
+	return `.carousel {
   position: relative;
   width: 100%;
   overflow: hidden;
@@ -53,7 +55,7 @@ func (c *Carousel) RenderCSS() string {
 
 // RenderJS returns the JavaScript for the carousel.
 func (c *Carousel) RenderJS() string {
-    return `// Carousel auto-slide
+	return `// Carousel auto-slide
 (function() {
     const carousel = document.querySelector('.carousel');
     if (!carousel) return;

@@ -1,8 +1,7 @@
-
-package components
+package card
 
 import (
-	"github.com/cdvelop/tinystrings"
+	. "github.com/cdvelop/tinystring"
 )
 
 // Card implements the Component interface for a card.
@@ -15,35 +14,35 @@ type Card struct {
 
 // RenderHTML generates the HTML for the card.
 func (c *Card) RenderHTML() string {
-	var b tinystrings.Builder
+	var b = Convert()
 	class := "card"
 	if c.CSSClass != "" {
 		class += " " + c.CSSClass
 	}
-	b.WriteString("<div class=\"")
-	b.WriteString(tinystrings.EscapeAttr(class))
-	b.WriteString("\">\n")
+	b.Write("<div class=\"")
+	b.Write(Convert(class).EscapeAttr())
+	b.Write("\">\n")
 
 	if c.Icon != "" {
-		b.WriteString("  <svg class=\"icon\"><use href=\"icons.svg#")
-		b.WriteString(tinystrings.EscapeAttr(c.Icon))
-		b.WriteString("\"></use></svg>\n")
+		b.Write("  <svg class=\"icon\"><use href=\"icons.svg#")
+		b.Write(Convert(c.Icon).EscapeAttr())
+		b.Write("\"></use></svg>\n")
 	}
-	b.WriteString("  <h3>")
-	b.WriteString(tinystrings.EscapeHTML(c.Title))
-	b.WriteString("</h3>\n")
+	b.Write("  <h3>")
+	b.Write(Convert(c.Title).EscapeHTML())
+	b.Write("</h3>\n")
 
-	b.WriteString("  <p>")
-	b.WriteString(tinystrings.EscapeHTML(c.Description))
-	b.WriteString("</p>\n")
+	b.Write("  <p>")
+	b.Write(Convert(c.Description).EscapeHTML())
+	b.Write("</p>\n")
 
-	b.WriteString("</div>\n")
+	b.Write("</div>\n")
 	return b.String()
 }
 
 // RenderCSS returns the CSS for the card.
 func (c *Card) RenderCSS() string {
-    return `.card {
+	return `.card {
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.5rem;

@@ -1,50 +1,53 @@
-
 package gosite
 
 import (
-	"os"
-	"path/filepath"
-	"crypto/sha256"
-	"encoding/hex"
-
-	"github.com/cdvelop/gosite/components"
-	"github.com/cdvelop/tinystrings"
+	. "github.com/cdvelop/tinystring"
 )
+
+type writerFile interface {
+	WriteFile(name string, data []byte, perm uint32) error
+}
 
 // Config holds the configuration for the site.
 type Config struct {
 	Title     string
-	OutputDir string
+	OutputDir string // eg: "dist"
+	// 	type writerFile interface {
+	//     WriteFile(name string, data []byte, perm uint32) error
+	// }
+	WriteFile writerFile
 }
 
 // Site manages the global state of the website, including pages, assets, etc.
 type Site struct {
-	Cfg       *Config
-	pages     []*components.Page
-	cssBlocks map[string]string
-	cssOrder  []string
-	jsBlocks  map[string]string
-	jsOrder   []string
+	Cfg   *Config
+	pages []*page
+	// ordered slices of assetBlock preserve insertion order and allow
+	// deduplication by hash without using maps (maps don't preserve order)
+	cssBlocks []assetBlock
+	jsBlocks  []assetBlock
+
+	buff *Conv // reusable buffer
+
 }
 
 // NewSite creates a new site manager.
 func NewSite(cfg *Config) *Site {
 	return &Site{
 		Cfg:       cfg,
-		pages:     make([]*components.Page, 0),
-		cssBlocks: make(map[string]string),
-		cssOrder:  make([]string, 0),
-		jsBlocks:  make(map[string]string),
-		jsOrder:   make([]string, 0),
+		pages:     make([]*page, 0),
+		cssBlocks: make([]assetBlock, 0),
+		jsBlocks:  make([]assetBlock, 0),
+		buff:      Convert(),
 	}
 }
 
 // NewPage creates a new page and registers it with the site.
-func (s *Site) NewPage(title, filename string) *components.Page {
-	p := &components.Page{
-		Site:     s,
-		Title:    title,
-		Filename: filename,
+func (s *Site) NewPage(title, filename string) *page {
+	p := &page{
+		site:     s,
+		title:    title,
+		filename: filename,
 	}
 	s.pages = append(s.pages, p)
 	return p
@@ -57,17 +60,17 @@ func (s *Site) PageCount() int {
 
 // BuildNav creates the navigation menu.
 func (s *Site) BuildNav() string {
-	var b tinystrings.Builder
-	b.WriteString("<nav class=\"main-nav\">\n")
+	s.buff.Reset()
+	s.buff.Write("<nav class=\"main-nav\">\n")
 	for _, page := range s.pages {
-		b.WriteString("  <a href=\"")
-		b.WriteString(tinystrings.EscapeAttr(page.Filename))
-		b.WriteString("\" class=\"nav-link\">")
-		b.WriteString(tinystrings.EscapeHTML(page.Title))
-		b.WriteString("</a>\n")
+		s.buff.Write("  <a href=\"")
+		s.buff.Write(Convert(page.filename).EscapeAttr())
+		s.buff.Write("\" class=\"nav-link\">")
+		s.buff.Write(Convert(page.title).EscapeHTML())
+		s.buff.Write("</a>\n")
 	}
-	b.WriteString("</nav>\n")
-	return b.String()
+	s.buff.Write("</nav>\n")
+	return s.buff.String()
 }
 
 // AddCSS accumulates CSS with deduplication at the site level.
@@ -75,11 +78,8 @@ func (s *Site) AddCSS(css string) {
 	if css == "" {
 		return
 	}
-	hash := hashString(css)
-	if _, exists := s.cssBlocks[hash]; !exists {
-		s.cssBlocks[hash] = css
-		s.cssOrder = append(s.cssOrder, hash)
-	}
+
+	s.cssBlocks = append(s.cssBlocks, assetBlock{Content: css})
 }
 
 // AddJS accumulates JavaScript with deduplication at the site level.
@@ -87,22 +87,16 @@ func (s *Site) AddJS(js string) {
 	if js == "" {
 		return
 	}
-	hash := hashString(js)
-	if _, exists := s.jsBlocks[hash]; !exists {
-		s.jsBlocks[hash] = js
-		s.jsOrder = append(s.jsOrder, hash)
-	}
+
+	s.jsBlocks = append(s.jsBlocks, assetBlock{Content: js})
 }
 
 // Generate renders all site files to disk.
 func (s *Site) Generate() error {
-	if err := os.MkdirAll(s.Cfg.OutputDir, 0755); err != nil {
-		return err
-	}
 
 	for _, page := range s.pages {
-		pagePath := filepath.Join(s.Cfg.OutputDir, page.Filename)
-		if err := os.WriteFile(pagePath, []byte(page.RenderHTML()), 0644); err != nil {
+		pagePath := PathJoin(s.Cfg.OutputDir, page.filename)
+		if err := s.Cfg.WriteFile.WriteFile(pagePath, []byte(page.RenderHTML()), 0644); err != nil {
 			return err
 		}
 	}
@@ -118,29 +112,22 @@ func (s *Site) Generate() error {
 
 // writeCSS writes the combined and deduplicated CSS to a file.
 func (s *Site) writeCSS() error {
-	var b tinystrings.Builder
-	for _, hash := range s.cssOrder {
-		b.WriteString(s.cssBlocks[hash])
-		b.WriteString("\n")
+	s.buff.Reset()
+	for _, b := range s.cssBlocks {
+		s.buff.Write(b.Content)
+		s.buff.Write("\n")
 	}
-	cssPath := filepath.Join(s.Cfg.OutputDir, "style.css")
-	return os.WriteFile(cssPath, []byte(b.String()), 0644)
+	cssPath := PathJoin(s.Cfg.OutputDir, "style.css")
+	return s.Cfg.WriteFile.WriteFile(cssPath, []byte(s.buff.String()), 0644)
 }
 
 // writeJS writes the combined and deduplicated JS to a file.
 func (s *Site) writeJS() error {
-	var b tinystrings.Builder
-	for _, hash := range s.jsOrder {
-		b.WriteString(s.jsBlocks[hash])
-		b.WriteString("\n")
+	s.buff.Reset()
+	for _, b := range s.jsBlocks {
+		s.buff.Write(b.Content)
+		s.buff.Write("\n")
 	}
-	jsPath := filepath.Join(s.Cfg.OutputDir, "main.js")
-	return os.WriteFile(jsPath, []byte(b.String()), 0644)
-}
-
-// hashString creates a SHA-256 hash of a string.
-func hashString(s string) string {
-	h := sha256.New()
-	h.Write([]byte(s))
-	return hex.EncodeToString(h.Sum(nil))
+	jsPath := PathJoin(s.Cfg.OutputDir, "script.js")
+	return s.Cfg.WriteFile.WriteFile(jsPath, []byte(s.buff.String()), 0644)
 }

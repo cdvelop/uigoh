@@ -1,9 +1,7 @@
-
-package components
+package form
 
 import (
-	"fmt"
-	"strings"
+	. "github.com/cdvelop/tinystring"
 )
 
 // FormField defines a single field within a form.
@@ -28,23 +26,48 @@ type Form struct {
 
 // RenderHTML generates the HTML for the form.
 func (f *Form) RenderHTML() string {
-	var b strings.Builder
-	fmt.Fprintf(&b, "<form class=\"contact-form\" action=\"%s\" method=\"%s\">\n", escapeAttr(f.Config.Action), escapeAttr(f.Config.Method))
+	var b = Convert()
+	b.Write("<form class=\"contact-form\" action=\"")
+	b.Write(Convert(f.Config.Action).EscapeAttr())
+	b.Write("\" method=\"")
+	b.Write(Convert(f.Config.Method).EscapeAttr())
+	b.Write("\">\n")
 	for _, field := range f.Config.Fields {
 		if field.Type == "textarea" {
-			fmt.Fprintf(&b, "  <textarea name=\"%s\" placeholder=\"%s\"%s></textarea>\n", escapeAttr(field.Name), escapeAttr(field.Placeholder), boolAttr("required", field.Required))
+			b.Write("  <textarea name=\"")
+			b.Write(Convert(field.Name).EscapeAttr())
+			b.Write("\" placeholder=\"")
+			b.Write(Convert(field.Placeholder).EscapeAttr())
+			b.Write("\"")
+			b.Write(boolAttr("required", field.Required))
+			b.Write("></textarea>\n")
 		} else {
-			fmt.Fprintf(&b, "  <input type=\"%s\" name=\"%s\" placeholder=\"%s\"%s>\n", escapeAttr(field.Type), escapeAttr(field.Name), escapeAttr(field.Placeholder), boolAttr("required", field.Required))
+			b.Write("<input type=\"")
+			b.Write(Convert(field.Type).EscapeAttr())
+			b.Write("\" name=\"")
+			b.Write(Convert(field.Name).EscapeAttr())
+			b.Write("\" placeholder=\"")
+			b.Write(Convert(field.Placeholder).EscapeAttr())
+			b.Write("\"")
+			b.Write(boolAttr("required", field.Required))
+			b.Write(">\n")
 		}
 	}
-	b.WriteString("  <button type=\"submit\">Enviar Mensaje</button>\n")
-	b.WriteString("</form>\n")
+	b.Write("  <button type=\"submit\">Enviar Mensaje</button>\n")
+	b.Write("</form>\n")
 	return b.String()
+}
+
+func boolAttr(attr string, val bool) string {
+	if val {
+		return " " + attr
+	}
+	return ""
 }
 
 // RenderCSS returns the CSS for the form.
 func (f *Form) RenderCSS() string {
-    return `.contact-form {
+	return `.contact-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -76,7 +99,7 @@ func (f *Form) RenderCSS() string {
 
 // RenderJS returns the JavaScript for the form.
 func (f *Form) RenderJS() string {
-    return `// Simple form validation
+	return `// Simple form validation
 document.addEventListener('DOMContentLoaded', function() {
     const forms = document.querySelectorAll('.contact-form');
     forms.forEach(form => {

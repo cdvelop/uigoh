@@ -1,11 +1,11 @@
-
 package main
 
 import (
 	"log"
 
 	"github.com/cdvelop/gosite"
-	"github.com/cdvelop/gosite/components"
+	"github.com/cdvelop/gosite/components/card"
+	"github.com/cdvelop/gosite/components/form"
 )
 
 func main() {
@@ -24,11 +24,11 @@ func main() {
 
 	// 4. Add content to the home page
 	introSection := homePage.NewSection("Welcome to Our Website")
-	introSection.Add(&components.Card{
+	introSection.Add(&card.Card{
 		Title:       "Feature One",
 		Description: "This is a description for the first amazing feature.",
 		Icon:        "icon-star",
-	}).Add(&components.Card{
+	}).Add(&card.Card{
 		Title:       "Feature Two",
 		Description: "Discover the second feature that will change your life.",
 		Icon:        "icon-heart",
@@ -36,7 +36,7 @@ func main() {
 
 	// 5. Create the about page
 	aboutPage := site.NewPage("About Us", "about.html")
-	aboutPage.NewSection("About Our Company").Add(&components.Card{
+	aboutPage.NewSection("About Our Company").Add(&card.Card{
 		Title:       "Our Mission",
 		Description: "To build the best and most awesome things.",
 	})
@@ -44,11 +44,11 @@ func main() {
 	// 6. Create the contact page
 	contactPage := site.NewPage("Contact Us", "contact.html")
 	contactSection := contactPage.NewSection("Contact Us")
-	contactSection.Add(&components.Form{
-		Config: components.FormConfig{
+	contactSection.Add(&form.Form{
+		Config: form.FormConfig{
 			Action: "/submit-form",
 			Method: "POST",
-			Fields: []components.FormField{
+			Fields: []form.FormField{
 				{Type: "text", Name: "username", Placeholder: "Your Name", Required: true},
 				{Type: "email", Name: "email", Placeholder: "Your Email", Required: true},
 				{Type: "textarea", Name: "message", Placeholder: "Your Message"},

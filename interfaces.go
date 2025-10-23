@@ -1,5 +1,4 @@
-
-package components
+package gosite
 
 // SiteLink defines the interface for communication between components and the site.
 type SiteLink interface {
