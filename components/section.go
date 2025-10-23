@@ -2,14 +2,14 @@
 package components
 
 import (
-	"fmt"
-	"strings"
+	"github.com/cdvelop/gosite/util"
+	"github.com/cdvelop/tinystrings"
 )
 
 // SectionBuilder handles the construction of a page section.
 type SectionBuilder struct {
 	page     *Page
-	site     *site
+	site     SiteLink
 	Title    string
 	ModuleID string
 	content  []Component
@@ -32,14 +32,19 @@ func (s *SectionBuilder) Add(component Component) *SectionBuilder {
 
 // Render generates the section's HTML.
 func (s *SectionBuilder) Render() string {
-	var b strings.Builder
+	var b tinystrings.Builder
 	id := s.ModuleID
 	if id == "" {
-		id = strings.ToLower(strings.ReplaceAll(s.Title, " ", "-"))
+		id = tinystrings.ToLower(tinystrings.ReplaceAll(s.Title, " ", "-"))
 	}
-	fmt.Fprintf(&b, "<section id=\"%s\" class=\"page\">\n", escapeAttr(id))
+	b.WriteString("<section id=\"")
+	b.WriteString(util.EscapeAttr(id))
+	b.WriteString("\" class=\"page\">\n")
+
 	if s.Title != "" {
-		fmt.Fprintf(&b, "  <h1>%s</h1>\n", escapeHTML(s.Title))
+		b.WriteString("  <h1>")
+		b.WriteString(util.EscapeHTML(s.Title))
+		b.WriteString("</h1>\n")
 	}
 	b.WriteString("  <div class=\"card-container\">\n")
 	for _, item := range s.content {
