@@ -1,4 +1,4 @@
-# UiGoH - Architecture Summary
+# GoSite - Architecture Summary
 
 **Updated**: 2025-10-23  
 **Status**: Ready for Implementation  
@@ -43,7 +43,7 @@ type Site struct {
 }
 
 // Entry point
-site := uigoh.NewSite("Site Title", "output/dir")
+site := gosite.NewSite("Site Title", "output/dir")
 ```
 
 ### 2. Module Interface
@@ -59,7 +59,7 @@ type Module interface {
 ### 3. Main Flow
 ```go
 func main() {
-    pkg.UI = uigoh.NewSite("Monjitas Chillán", "src/web/ui/")
+    pkg.UI = gosite.NewSite("Monjitas Chillán", "src/web/ui/")
     
     for _, mod := range pkg.Modules {
         pkg.UI.AddSection(mod) // Auto-detects type

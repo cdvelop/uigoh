@@ -20,7 +20,7 @@ Currently, UI is generated using Go's `html/template` with external HTML files (
 ### Solution
 Implement a **Component-Based UI System** written entirely in Go using **String Builders** and **Builder Pattern**, with complete separation between:
 - **Business Logic** (`src/internal/*`)
-- **UI Components** (`src/pkg/uigoh/*`)
+- **UI Components** (`src/pkg/gosite/*`)
 - **Module Registry** (`src/pkg/modules.go`)
 
 ---
@@ -88,7 +88,7 @@ The main UI manager accumulates all assets and renders **once**:
 - `src/internal/servicesPage` → Builds service listings
 - `src/internal/homePage` → Builds homepage layout
 
-**Constraint**: Can **only** use methods from `src/pkg/uigoh/ui.go` (public API).
+**Constraint**: Can **only** use methods from `src/pkg/gosite/ui.go` (public API).
 
 Optional method signature for each module:
 ```go
@@ -116,14 +116,14 @@ var Modules = []any{
 ---
 
 ### ✅ Decision 6: Package Location
-**Path**: `src/pkg/uigoh/uigoh.go`
+**Path**: `src/pkg/gosite/gosite.go`
 
 **Rationale**: Will be extracted as external package later, but initialized here during development.
 
 **Structure**:
 ```
-src/pkg/uigoh/
-├── uigoh.go          # Main UI manager (HtmlUI struct, New())
+src/pkg/gosite/
+├── gosite.go          # Main UI manager (HtmlUI struct, New())
 ├── page.go           # Page builder
 ├── nav.go            # Navigation component
 ├── card.go           # Card component
@@ -189,7 +189,7 @@ func GenerateSite(destinations ...string) error
            ┌────────────────────────────┘
            ▼
 ┌──────────────────────┐
-│  pkg/uigoh/*         │
+│  pkg/gosite/*         │
 │  - Component funcs   │
 │  - CSS/JS builders   │
 │  - Page rendering    │
@@ -544,8 +544,8 @@ html := Multiline(`
 Add a mode flag:
 
 ```go
-UI.SetMode(uigoh.Development) // Pretty-printed, comments
-UI.SetMode(uigoh.Production)  // Compact, no comments
+UI.SetMode(gosite.Development) // Pretty-printed, comments
+UI.SetMode(gosite.Production)  // Compact, no comments
 ```
 
 **Use case**: Easier debugging during development.

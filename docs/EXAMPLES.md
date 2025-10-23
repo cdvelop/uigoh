@@ -1,4 +1,4 @@
-# UiGoH - Complete Examples
+# GoSite - Complete Examples
 
 **Updated**: 2025-10-23  
 
@@ -10,10 +10,10 @@
 // src/pkg/ui.go
 package pkg
 
-import "github.com/yourorg/uigoh"
+import "github.com/yourorg/gosite"
 
 // Global UI instance
-var UI *uigoh.Site
+var UI *gosite.Site
 ```
 
 ---
@@ -288,12 +288,12 @@ import (
     "github.com/yourorg/project/internal/services"
     "github.com/yourorg/project/internal/contact"
     "github.com/yourorg/project/internal/staffpage"
-    "github.com/yourorg/uigoh"
+    "github.com/yourorg/gosite"
 )
 
 func main() {
     // Initialize UI system
-    pkg.UI = uigoh.NewSite("Monjitas Chillán", "src/web/ui/")
+    pkg.UI = gosite.NewSite("Monjitas Chillán", "src/web/ui/")
     
     // Register modules
     pkg.Modules = []any{
@@ -387,12 +387,12 @@ import (
     "testing"
     
     "github.com/yourorg/project/pkg"
-    "github.com/yourorg/uigoh"
+    "github.com/yourorg/gosite"
 )
 
 func TestHomepageRenderUI(t *testing.T) {
     // Setup
-    pkg.UI = uigoh.NewSite("Test Site", "test/output")
+    pkg.UI = gosite.NewSite("Test Site", "test/output")
     h := &Homepage{}
     
     // Execute

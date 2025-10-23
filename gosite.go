@@ -1,17 +1,15 @@
+package gosite
 
-package uigoh
-
-import "github.com/cdvelop/uigoh/components"
+import "github.com/cdvelop/gosite/components"
 
 // Site is the main entry point for the UI generation system.
 // It manages all pages, components, and assets (CSS, JS).
+// Re-exported from components package.
 type Site = components.Site
 
 // NewSite creates a new Site manager.
-// title: The overall title for the site.
-// outputDir: The directory where the generated files will be saved.
 func NewSite(title, outputDir string) *Site {
-    return components.NewSite(title, outputDir)
+	return components.NewSite(title, outputDir)
 }
 
 // Page represents a single HTML page.
@@ -32,16 +30,8 @@ type FormField = components.FormField
 // NavItem represents a single item in the navigation.
 type NavItem = components.NavItem
 
-// Note on Usage:
-//
-// To correctly build a UI, you must use the methods provided by the Site object.
-// Standalone functions for components are not provided because the Site object
-// is responsible for collecting and managing the CSS and JavaScript assets
-// required by each component.
-//
-// Example:
-//
-// site := uigoh.NewSite("My Awesome Site", "dist")
+// Example usage:
+// site := gosite.NewSite("My Awesome Site", "dist")
 // homePage := site.NewPage(nil, "Home")
 // section := homePage.Section("Welcome")
 // section.AddCard("Title", "Description", "icon-name")

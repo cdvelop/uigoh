@@ -21,7 +21,7 @@ Every UI component is a **Go function** that returns **strings** (HTML, CSS, JS)
 
 ```go
 // Example: card.go
-package uigoh
+package gosite
 
 import "strings"
 
@@ -109,14 +109,14 @@ func (c *CardConfig) RenderJS() string {
 ### Page Builder
 
 ```go
-// uigoh.go
-package uigoh
+// gosite.go
+package gosite
 
 import "strings"
 
 ```go
 // page.go
-package uigoh
+package gosite
 
 import "strings"
 
@@ -221,7 +221,7 @@ func (p *Page) RenderHTML() string {
 
 ```go
 // site.go
-package uigoh
+package gosite
 
 import (
     "fmt"
@@ -558,7 +558,7 @@ func (s *Site) RenderJS() string {
 
 ```go
 // section.go
-package uigoh
+package gosite
 
 import (
     "strings"
@@ -672,7 +672,7 @@ func (s *SectionBuilder) RenderCSS() string {
 
 ```go
 // nav.go
-package uigoh
+package gosite
 
 import "strings"
 
@@ -759,7 +759,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 ```go
 // carousel.go
-package uigoh
+package gosite
 
 import "strings"
 
@@ -841,7 +841,7 @@ func (c *CarouselConfig) RenderJS() string {
 
 ```go
 // form.go
-package uigoh
+package gosite
 
 import "strings"
 
@@ -956,7 +956,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 ```go
 // utils.go
-package uigoh
+package gosite
 
 import (
     "crypto/sha256"
@@ -1021,7 +1021,7 @@ Site (Singleton)
 
 ```
 1. main.go creates Site
-   pkg.UI = uigoh.NewSite("Site Title", "output/dir")
+   pkg.UI = gosite.NewSite("Site Title", "output/dir")
    ↓
 2. main.go iterates modules
    for _, mod := range pkg.Modules {
@@ -1188,7 +1188,7 @@ import (
 
 func main() {
     // Initialize UI system
-    pkg.UI = uigoh.NewSite("Monjitas Chillán", "src/web/ui/")
+    pkg.UI = gosite.NewSite("Monjitas Chillán", "src/web/ui/")
     
     // Register modules
     pkg.Modules = []any{
@@ -1330,7 +1330,7 @@ func (s *Services) RenderUI(context ...any) string {
 
 ```go
 // card_test.go
-package uigoh
+package gosite
 
 import "testing"
 

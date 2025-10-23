@@ -301,7 +301,7 @@ type Site struct {
 ```go
 func main() {
     // Initialize site
-    pkg.UI = uigoh.NewSite("Title", "output/")
+    pkg.UI = gosite.NewSite("Title", "output/")
     
     // Register modules
     for _, mod := range pkg.Modules {
@@ -331,7 +331,7 @@ func main() {
 
 **Module Responsibility**: Only provide content and title
 
-**uigoh Responsibility**: Generate IDs, navigation, structure
+**gosite Responsibility**: Generate IDs, navigation, structure
 
 **Complete Example**:
 ```go
@@ -356,7 +356,7 @@ func (m *ServicesPage) RenderUI(context ...any) string {
 }
 ```
 
-**Behind the Scenes (in uigoh)**:
+**Behind the Scenes (in gosite)**:
 ```go
 // section.go
 type SectionBuilder struct {
@@ -523,12 +523,12 @@ func (s *SectionBuilder) AddCustom(componentHTML string) *SectionBuilder // Esca
 ```
 src/
 ├── pkg/
-│   ├── ui.go            # var UI = uigoh.New()
+│   ├── ui.go            # var UI = gosite.New()
 │   ├── modules.go       # var Modules = []any{...}
 │   ├── interfaces.go    # UserContext interface
 │   │
-│   └── uigoh/
-│       ├── uigoh.go     # HtmlUI manager
+│   └── gosite/
+│       ├── gosite.go     # HtmlUI manager
 │       ├── page.go      # Page builder (with dedup)
 │       ├── utils.go     # escapeHTML, hashString
 │       ├── section.go   # Section component
@@ -626,9 +626,9 @@ src/
                   │
                   ▼
 ┌─────────────────────────────────────────────────────────┐
-│ pkg/ui.go → pkg/uigoh/*                                 │
+│ pkg/ui.go → pkg/gosite/*                                 │
 │  - Section() auto-generates ID from module name         │
-│  - section.AddCard() calls uigoh.Card()                 │
+│  - section.AddCard() calls gosite.Card()                 │
 │  - Card() generates HTML                                │
 │  - Card() accumulates CSS (deduplicated)                │
 │  - Page.RenderHTML() auto-generates navigation          │
@@ -674,7 +674,7 @@ src/
 - Content data
 - Business logic
 
-**uigoh handles**:
+**gosite handles**:
 - ID generation (from module name)
 - Navigation generation (from sections)
 - HTML structure
@@ -702,7 +702,7 @@ All architectural decisions are now finalized and approved:
 Next steps:
 
 1. ✅ Start Phase 1 (Foundation)
-2. ✅ Create `src/pkg/uigoh/` structure  
+2. ✅ Create `src/pkg/gosite/` structure  
 3. ✅ Implement auto-ID generation via reflection
 4. ✅ Implement auto-navigation generation
 5. ✅ Implement components with deduplication
@@ -716,7 +716,7 @@ Next steps:
 | Component | Responsibility |
 |-----------|----------------|
 | **Module** | Data + Business logic + Call UI API |
-| **uigoh** | HTML/CSS/JS generation + Auto-IDs + Auto-nav |
+| **gosite** | HTML/CSS/JS generation + Auto-IDs + Auto-nav |
 | **Section** | Container builder, no ID knowledge |
 | **Page** | Section aggregator + Nav generator |
 | **GenerateSite** | Write files only on changes |

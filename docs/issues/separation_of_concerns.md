@@ -32,7 +32,7 @@ Each layer has a specific responsibility and clear boundaries:
 - ❌ Direct HTML generation
 - ❌ CSS styling
 - ❌ JavaScript code
-- ❌ Import `src/pkg/uigoh/*` directly (only through `pkg/ui.go`)
+- ❌ Import `src/pkg/gosite/*` directly (only through `pkg/ui.go`)
 - ❌ Know about file paths in `web/`
 
 **Example Structure**:
@@ -69,21 +69,21 @@ src/internal/
 ```go
 package pkg
 
-import "github.com/cdvelop/monjitaschillan.cl/pkg/uigoh"
+import "github.com/cdvelop/monjitaschillan.cl/pkg/gosite"
 
 // UI is the singleton instance exposed to internal modules
-var UI = uigoh.New()
+var UI = gosite.New()
 ```
 
 **Why this separation?**
 - Internal modules only see `pkg/ui.go`
-- `uigoh` implementation details are hidden
+- `gosite` implementation details are hidden
 - Easy to swap implementations later
 - Clear API surface
 
 ---
 
-### 3️⃣ `src/pkg/uigoh/*` - UI Implementation Layer
+### 3️⃣ `src/pkg/gosite/*` - UI Implementation Layer
 
 **Responsibility**: Implement all UI components and rendering logic
 
@@ -103,8 +103,8 @@ var UI = uigoh.New()
 
 **Files** (all at root level):
 ```
-src/pkg/uigoh/
-├── uigoh.go         # Main HtmlUI manager, New()
+src/pkg/gosite/
+├── gosite.go         # Main HtmlUI manager, New()
 ├── page.go          # Page builder
 ├── nav.go           # Navigation component
 ├── card.go          # Card component
@@ -178,13 +178,13 @@ src/pkg/uigoh/
                  │
                  ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 3. pkg/ui.go forwards to uigoh                               │
-│    var UI = uigoh.New()                                      │
+│ 3. pkg/ui.go forwards to gosite                               │
+│    var UI = gosite.New()                                      │
 └────────────────┬────────────────────────────────────────────┘
                  │
                  ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 4. pkg/uigoh/card.go generates HTML                          │
+│ 4. pkg/gosite/card.go generates HTML                          │
 │    - Builds HTML string                                      │
 │    - Escapes user input                                      │
 │    - Auto-adds CSS to page                                   │
@@ -224,7 +224,7 @@ src/pkg/uigoh/
 internal/* ──────▶ pkg/ui.go
                       │
                       ▼
-                  pkg/uigoh/*
+                  pkg/gosite/*
                       │
                       ▼
                   src/web/ui/  (file system)
@@ -233,8 +233,8 @@ internal/* ──────▶ pkg/ui.go
 ### Forbidden Dependencies
 
 ```
-❌ internal/* ──────▶ pkg/uigoh/*  (must go through pkg/ui.go)
-❌ pkg/uigoh/* ─────▶ internal/*   (no business logic knowledge)
+❌ internal/* ──────▶ pkg/gosite/*  (must go through pkg/ui.go)
+❌ pkg/gosite/* ─────▶ internal/*   (no business logic knowledge)
 ❌ internal/* ──────▶ src/web/*    (no direct file operations)
 ```
 
@@ -392,10 +392,10 @@ func (m *Module) RenderUI(params ...any) (string, error) {
    }
    ```
 
-2. **Don't import uigoh directly**
+2. **Don't import gosite directly**
    ```go
    // Bad - bypasses public API
-   import "github.com/.../pkg/uigoh" // ❌
+   import "github.com/.../pkg/gosite" // ❌
    
    // Good - use public API
    import "github.com/.../pkg" // ✅
@@ -430,7 +430,7 @@ func TestGetActivePatients(t *testing.T) {
 
 ### UI Component Tests (No Business Logic)
 ```go
-// pkg/uigoh/card_test.go
+// pkg/gosite/card_test.go
 func TestCardRender(t *testing.T) {
     card := &CardConfig{
         Title: "Test",
@@ -467,9 +467,9 @@ When reviewing code, verify:
 
 - [ ] No HTML strings in `internal/*` (except `ui.go`)
 - [ ] All UI calls go through `pkg.UI.*`
-- [ ] No `import "pkg/uigoh"` in internal modules
+- [ ] No `import "pkg/gosite"` in internal modules
 - [ ] Business models are data-only (no CSS/HTML fields)
-- [ ] `uigoh` components don't import `internal/*`
+- [ ] `gosite` components don't import `internal/*`
 - [ ] Clear separation between data and presentation
 
 ---
@@ -481,8 +481,8 @@ Track these to ensure separation is maintained:
 | Metric | Target | Check |
 |--------|--------|-------|
 | HTML strings in `internal/*` (excluding `ui.go`) | 0 | `grep -r "WriteString(\"<" internal/` |
-| Direct `uigoh` imports in `internal/*` | 0 | `grep -r "pkg/uigoh" internal/` |
-| Business logic in `uigoh/*` | 0 | Manual review |
+| Direct `gosite` imports in `internal/*` | 0 | `grep -r "pkg/gosite" internal/` |
+| Business logic in `gosite/*` | 0 | Manual review |
 
 ---
 

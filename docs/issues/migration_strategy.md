@@ -8,7 +8,7 @@
 
 ## 🎯 Migration Goal
 
-Replace current `builder` package (template-based) with new `uigoh` system (component-based, pure Go) **without breaking production**.
+Replace current `builder` package (template-based) with new `gosite` system (component-based, pure Go) **without breaking production**.
 
 ---
 
@@ -42,11 +42,11 @@ grep -r "github.com/cdvelop/monjitaschillan.cl/builder" .
 **Goal**: Create new package structure without breaking existing system
 
 **Tasks**:
-1. Create `src/pkg/uigoh/` directory
+1. Create `src/pkg/gosite/` directory
 2. Create `src/pkg/ui.go` (public API)
 3. Create `src/pkg/modules.go` (empty for now)
-4. Implement core uigoh files:
-   - `uigoh.go` (HtmlUI manager)
+4. Implement core gosite files:
+   - `gosite.go` (HtmlUI manager)
    - `page.go` (Page builder)
    - `utils.go` (HTML escaping)
 
@@ -80,7 +80,7 @@ go build ./src/cmd/appserver
 
 **Validation**:
 ```bash
-cd src/pkg/uigoh
+cd src/pkg/gosite
 go test -v
 ```
 
@@ -283,13 +283,13 @@ src/web/ui/css/
 ```
 
 **Strategy**:
-- **Global styles** (variables, reset, base) → `uigoh/global.go`
+- **Global styles** (variables, reset, base) → `gosite/global.go`
 - **Component styles** → Each component's `RenderCSS()`
 
 **Example**:
 ```go
-// uigoh/global.go
-package uigoh
+// gosite/global.go
+package gosite
 
 func GlobalCSS() string {
     return `/* CSS Variables */
@@ -358,14 +358,14 @@ func main() {
 // main.go - AFTER
 import (
     "github.com/cdvelop/monjitaschillan.cl/pkg"
-    "github.com/cdvelop/monjitaschillan.cl/pkg/uigoh"
+    "github.com/cdvelop/monjitaschillan.cl/pkg/gosite"
 )
 
 func main() {
     // ... setup code ...
     
     // Discover and render modules
-    modules := uigoh.DiscoverModules(pkg.Modules)
+    modules := gosite.DiscoverModules(pkg.Modules)
     
     page := pkg.UI.NewPage("Monjitas Chillán")
     
@@ -441,7 +441,7 @@ ls -la src/web/public/
 ### Unit Tests
 ```bash
 # Test individual components
-go test ./src/pkg/uigoh/... -v
+go test ./src/pkg/gosite/... -v
 
 # Test modules
 go test ./src/internal/homePage/... -v
@@ -548,15 +548,15 @@ firefox src/web/public/index.html
 
 ### Phase 1
 ```bash
-mkdir -p src/pkg/uigoh
+mkdir -p src/pkg/gosite
 touch src/pkg/ui.go src/pkg/modules.go
-cd src/pkg/uigoh
-touch uigoh.go page.go utils.go
+cd src/pkg/gosite
+touch gosite.go page.go utils.go
 ```
 
 ### Phase 2
 ```bash
-cd src/pkg/uigoh
+cd src/pkg/gosite
 touch nav.go card.go carousel.go form.go section.go css.go js.go
 ```
 
@@ -570,7 +570,7 @@ touch src/internal/homePage/ui.go
 
 ### Test
 ```bash
-go test ./src/pkg/uigoh/... -v
+go test ./src/pkg/gosite/... -v
 go build ./src/cmd/appserver
 ```
 

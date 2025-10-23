@@ -51,8 +51,8 @@ var Modules = []any{
 ### Auto-Discovery Process
 
 ```go
-// Example reflection logic in uigoh/discovery.go
-package uigoh
+// Example reflection logic in gosite/discovery.go
+package gosite
 
 import (
     "reflect"
@@ -128,7 +128,7 @@ func main() {
     // ... setup code ...
     
     // Discover all modules
-    modules := uigoh.DiscoverModules(pkg.Modules)
+    modules := gosite.DiscoverModules(pkg.Modules)
     
     // Create main page
     page := ui.UI.NewPage("Monjitas Chillán")
@@ -360,7 +360,7 @@ func TestModuleDiscovery(t *testing.T) {
         &homePage.Module{},
     }
     
-    discovered := uigoh.DiscoverModules(modules)
+    discovered := gosite.DiscoverModules(modules)
     
     if len(discovered) != 1 {
         t.Fatalf("Expected 1 module, got %d", len(discovered))
