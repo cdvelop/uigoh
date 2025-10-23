@@ -2,7 +2,6 @@
 package components
 
 import (
-	"github.com/cdvelop/gosite/util"
 	"github.com/cdvelop/tinystrings"
 )
 
@@ -38,12 +37,12 @@ func (s *SectionBuilder) Render() string {
 		id = tinystrings.ToLower(tinystrings.ReplaceAll(s.Title, " ", "-"))
 	}
 	b.WriteString("<section id=\"")
-	b.WriteString(util.EscapeAttr(id))
+	b.WriteString(tinystrings.EscapeAttr(id))
 	b.WriteString("\" class=\"page\">\n")
 
 	if s.Title != "" {
 		b.WriteString("  <h1>")
-		b.WriteString(util.EscapeHTML(s.Title))
+		b.WriteString(tinystrings.EscapeHTML(s.Title))
 		b.WriteString("</h1>\n")
 	}
 	b.WriteString("  <div class=\"card-container\">\n")

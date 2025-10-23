@@ -1,7 +1,10 @@
 
 package tinystrings
 
-import "strings"
+import (
+	"html"
+	"strings"
+)
 
 // Builder is a wrapper around strings.Builder.
 type Builder struct {
@@ -27,4 +30,14 @@ func ToLower(s string) string {
 // non-overlapping instances of old replaced by new.
 func ReplaceAll(s, old, new string) string {
 	return strings.ReplaceAll(s, old, new)
+}
+
+// EscapeHTML escapes HTML special characters.
+func EscapeHTML(s string) string {
+	return html.EscapeString(s)
+}
+
+// EscapeAttr escapes HTML attribute special characters.
+func EscapeAttr(s string) string {
+	return html.EscapeString(s)
 }
