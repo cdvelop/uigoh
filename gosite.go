@@ -81,8 +81,9 @@ func (s *Site) PageCount() int {
 // BuildNav creates the navigation menu using NavbarBuilder.
 func (s *Site) BuildNav() string {
 	nav := &NavbarBuilder{site: s}
-	// Register navbar CSS once
+	// Register navbar CSS and JS once
 	s.AddCSS(nav.RenderCSS())
+	s.AddJS(nav.RenderJS())
 	return nav.Render()
 }
 
