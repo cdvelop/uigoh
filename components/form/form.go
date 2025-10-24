@@ -19,7 +19,7 @@ type FormConfig struct {
 	Fields []FormField
 }
 
-// Form implements the Component interface for a form.
+// Form implements HTMLRenderer, CSSRenderer, and JSRenderer interfaces.
 type Form struct {
 	Config FormConfig
 }

@@ -10,14 +10,23 @@ type SectionBuilder struct {
 	site     SiteLink
 	Title    string
 	ModuleID string
-	content  []Component
+	content  []any
 }
 
 // Add appends a new component to the section.
-func (s *SectionBuilder) Add(component Component) *SectionBuilder {
+func (s *SectionBuilder) Add(component any) *SectionBuilder {
 	s.content = append(s.content, component)
-	s.site.AddCSS(component.RenderCSS())
-	s.site.AddJS(component.RenderJS())
+
+	// Cast and handle CSS if component implements CSSRenderer
+	if cssRenderer, ok := component.(CSSRenderer); ok {
+		s.site.AddCSS(cssRenderer.RenderCSS())
+	}
+
+	// Cast and handle JS if component implements JSRenderer
+	if jsRenderer, ok := component.(JSRenderer); ok {
+		s.site.AddJS(jsRenderer.RenderJS())
+	}
+
 	return s
 }
 
@@ -39,9 +48,12 @@ func (s *SectionBuilder) Render() string {
 	}
 	b.Write("  <div class=\"card-container\">\n")
 	for _, item := range s.content {
-		b.Write("    ")
-		b.Write(item.RenderHTML())
-		b.Write("\n")
+		// Only render HTML if component implements HTMLRenderer
+		if htmlRenderer, ok := item.(HTMLRenderer); ok {
+			b.Write("    ")
+			b.Write(htmlRenderer.RenderHTML())
+			b.Write("\n")
+		}
 	}
 	b.Write("  </div>\n")
 	b.Write("</section>\n")

@@ -10,7 +10,7 @@ type CarouselImage struct {
 	Alt string
 }
 
-// Carousel implements the Component interface for a carousel.
+// Carousel implements HTMLRenderer, CSSRenderer, and JSRenderer interfaces.
 type Carousel struct {
 	Images []CarouselImage
 }

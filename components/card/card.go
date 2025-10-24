@@ -4,7 +4,7 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-// Card implements the Component interface for a card.
+// Card implements HTMLRenderer, CSSRenderer, and JSRenderer interfaces.
 type Card struct {
 	Title       string
 	Description string

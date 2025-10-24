@@ -8,9 +8,17 @@ type SiteLink interface {
 	AddJS(js string)
 }
 
-// Component is an interface for all UI components.
-type Component interface {
+// HTMLRenderer is an interface for components that render HTML.
+type HTMLRenderer interface {
 	RenderHTML() string
+}
+
+// CSSRenderer is an interface for components that render CSS.
+type CSSRenderer interface {
 	RenderCSS() string
+}
+
+// JSRenderer is an interface for components that render JavaScript.
+type JSRenderer interface {
 	RenderJS() string
 }
