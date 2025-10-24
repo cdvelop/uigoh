@@ -129,10 +129,10 @@ func (s *Site) Generate() error {
 		}
 	}
 
-	if err := s.writeCSSFiles(); err != nil {
+	if err := s.writeCSSFile(); err != nil {
 		return err
 	}
-	if err := s.writeJS(); err != nil {
+	if err := s.writeJSFile(); err != nil {
 		return err
 	}
 	return nil
@@ -216,8 +216,8 @@ func (s *Site) generateBaseCSS() string {
 	return s.buff.String()
 }
 
-// writeCSSFiles writes separate CSS files (base + components)
-func (s *Site) writeCSSFiles() error {
+// writeCSSFile writes separate CSS files (base + components)
+func (s *Site) writeCSSFile() error {
 	s.buff.Reset()
 
 	// Write base CSS (variables + reset + layout)
@@ -233,8 +233,8 @@ func (s *Site) writeCSSFiles() error {
 	return s.Cfg.WriteFile(cssPath, s.buff.String())
 }
 
-// writeJS writes the combined and deduplicated JS to a file.
-func (s *Site) writeJS() error {
+// writeJSFile writes the combined and deduplicated JS to a file.
+func (s *Site) writeJSFile() error {
 	s.buff.Reset()
 	for _, b := range s.jsBlocks {
 		s.buff.Write(b.Content)

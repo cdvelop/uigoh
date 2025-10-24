@@ -72,8 +72,3 @@ func (c *Card) RenderCSS() string {
 }
 `
 }
-
-// RenderJS returns the JavaScript for the card (empty in this case).
-func (c *Card) RenderJS() string {
-	return ""
-}
