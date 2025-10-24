@@ -39,7 +39,7 @@ func (p *page) RenderHTML() string {
 	b.Write("<html lang=\"es\">\n")
 	b.Write("<head>\n")
 	b.Write("  <meta charset=\"UTF-8\">\n")
-	b.Write("  <meta name=\"viewport\" content=\"width=device-width, initial-scale-1.0\">\n")
+	b.Write("  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n")
 	b.Write("  <title>")
 	b.Write(Convert(p.title).EscapeHTML())
 	b.Write("</title>\n")

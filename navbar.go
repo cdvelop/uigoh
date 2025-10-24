@@ -49,238 +49,232 @@ func (n *NavbarBuilder) Render() string {
 
 // RenderCSS generates the navbar CSS with responsive styles
 func (n *NavbarBuilder) RenderCSS() string {
-	var b = Convert()
+	//*css
+	return `/* Main nav styles */
+.main-nav {
+	height: 60px;
+	background: linear-gradient(135deg, var(--color-primary), #2c6aa0);
+	box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	position: sticky;
+	top: 0;
+	z-index: 100;
+}
 
-	// Main nav styles
-	b.Write(".main-nav {\n")
-	b.Write("  height: 60px;\n")
-	b.Write("  background: linear-gradient(135deg, var(--color-primary), #2c6aa0);\n")
-	b.Write("  box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n")
-	b.Write("  display: flex;\n")
-	b.Write("  justify-content: flex-end;\n")
-	b.Write("  align-items: center;\n")
-	b.Write("  position: sticky;\n")
-	b.Write("  top: 0;\n")
-	b.Write("  z-index: 100;\n")
-	b.Write("}\n\n")
+/* Links container */
+.links-container {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
 
-	// Links container
-	b.Write(".links-container {\n")
-	b.Write("  height: 100%;\n")
-	b.Write("  width: 100%;\n")
-	b.Write("  display: flex;\n")
-	b.Write("  flex-direction: row;\n")
-	b.Write("  align-items: center;\n")
-	b.Write("}\n\n")
+/* Nav links */
+.main-nav a {
+	height: 100%;
+	padding: 0 20px;
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	color: white;
+	transition: background 0.2s;
+	font-weight: 500;
+}
 
-	// Nav links
-	b.Write(".main-nav a {\n")
-	b.Write("  height: 100%;\n")
-	b.Write("  padding: 0 20px;\n")
-	b.Write("  display: flex;\n")
-	b.Write("  align-items: center;\n")
-	b.Write("  text-decoration: none;\n")
-	b.Write("  color: white;\n")
-	b.Write("  transition: background 0.2s;\n")
-	b.Write("  font-weight: 500;\n")
-	b.Write("}\n\n")
+.main-nav a:hover {
+	background: rgba(255,255,255,0.2);
+}
 
-	b.Write(".main-nav a:hover {\n")
-	b.Write("  background: rgba(255,255,255,0.2);\n")
-	b.Write("}\n\n")
+.main-nav .home-link {
+	margin-right: auto;
+	font-weight: 600;
+}
 
-	b.Write(".main-nav .home-link {\n")
-	b.Write("  margin-right: auto;\n")
-	b.Write("  font-weight: 600;\n")
-	b.Write("}\n\n")
+/* SVG styles */
+.main-nav svg {
+	fill: white;
+}
 
-	// SVG styles
-	b.Write(".main-nav svg {\n")
-	b.Write("  fill: white;\n")
-	b.Write("}\n\n")
+/* Hide checkbox and buttons by default */
+#sidebar-active {
+	display: none;
+}
 
-	// Hide checkbox and buttons by default
-	b.Write("#sidebar-active {\n")
-	b.Write("  display: none;\n")
-	b.Write("}\n\n")
+.open-sidebar-button,
+.close-sidebar-button {
+	display: none;
+}
 
-	b.Write(".open-sidebar-button,\n")
-	b.Write(".close-sidebar-button {\n")
-	b.Write("  display: none;\n")
-	b.Write("}\n\n")
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+	.links-container {
+		flex-direction: column;
+		align-items: flex-start;
+		position: fixed;
+		top: 0;
+		right: -100%;
+		z-index: 10;
+		width: 300px;
+		height: 100vh;
+		background: linear-gradient(180deg, var(--color-primary), #2c6aa0);
+		box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+		transition: right 0.3s ease-out;
+	}
 
-	// Mobile responsive styles
-	b.Write("@media (max-width: 768px) {\n")
-	b.Write("  .links-container {\n")
-	b.Write("    flex-direction: column;\n")
-	b.Write("    align-items: flex-start;\n")
-	b.Write("    position: fixed;\n")
-	b.Write("    top: 0;\n")
-	b.Write("    right: -100%;\n")
-	b.Write("    z-index: 10;\n")
-	b.Write("    width: 300px;\n")
-	b.Write("    height: 100vh;\n")
-	b.Write("    background: linear-gradient(180deg, var(--color-primary), #2c6aa0);\n")
-	b.Write("    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);\n")
-	b.Write("    transition: right 0.3s ease-out;\n")
-	b.Write("  }\n\n")
+	.main-nav a {
+		box-sizing: border-box;
+		height: auto;
+		width: 100%;
+		padding: 20px 30px;
+		justify-content: flex-start;
+		border-bottom: 1px solid rgba(255,255,255,0.1);
+	}
 
-	b.Write("  .main-nav a {\n")
-	b.Write("    box-sizing: border-box;\n")
-	b.Write("    height: auto;\n")
-	b.Write("    width: 100%;\n")
-	b.Write("    padding: 20px 30px;\n")
-	b.Write("    justify-content: flex-start;\n")
-	b.Write("    border-bottom: 1px solid rgba(255,255,255,0.1);\n")
-	b.Write("  }\n\n")
+	.main-nav .home-link {
+		margin-right: 0;
+	}
 
-	b.Write("  .main-nav .home-link {\n")
-	b.Write("    margin-right: 0;\n")
-	b.Write("  }\n\n")
+	.open-sidebar-button,
+	.close-sidebar-button {
+		padding: 20px;
+		display: block;
+		cursor: pointer;
+	}
 
-	b.Write("  .open-sidebar-button,\n")
-	b.Write("  .close-sidebar-button {\n")
-	b.Write("    padding: 20px;\n")
-	b.Write("    display: block;\n")
-	b.Write("    cursor: pointer;\n")
-	b.Write("  }\n\n")
+	#sidebar-active:checked ~ .links-container {
+		right: 0;
+	}
 
-	b.Write("  #sidebar-active:checked ~ .links-container {\n")
-	b.Write("    right: 0;\n")
-	b.Write("  }\n\n")
+	#sidebar-active:checked ~ #overlay {
+		height: 100%;
+		width: 100%;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 9;
+		background: rgba(0,0,0,0.5);
+	}
+}
 
-	b.Write("  #sidebar-active:checked ~ #overlay {\n")
-	b.Write("    height: 100%;\n")
-	b.Write("    width: 100%;\n")
-	b.Write("    position: fixed;\n")
-	b.Write("    top: 0;\n")
-	b.Write("    left: 0;\n")
-	b.Write("    z-index: 9;\n")
-	b.Write("    background: rgba(0,0,0,0.5);\n")
-	b.Write("  }\n")
-	b.Write("}\n\n")
+/* View Transition API */
+@view-transition {
+	navigation: auto;
+}
 
-	// View Transition API styles
-	b.Write("/* View Transition API */\n")
-	b.Write("@view-transition {\n")
-	b.Write("  navigation: auto;\n")
-	b.Write("}\n\n")
+::view-transition-group(*) {
+	animation-duration: 0.3s;
+}
 
-	b.Write("::view-transition-group(*) {\n")
-	b.Write("  animation-duration: 0.3s;\n")
-	b.Write("}\n\n")
+/* Smooth fade transition for page content */
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+}
 
-	// Smooth fade transition for page content
-	b.Write("@keyframes fade-in {\n")
-	b.Write("  from {\n")
-	b.Write("    opacity: 0;\n")
-	b.Write("  }\n")
-	b.Write("}\n\n")
+@keyframes fade-out {
+	to {
+		opacity: 0;
+	}
+}
 
-	b.Write("@keyframes fade-out {\n")
-	b.Write("  to {\n")
-	b.Write("    opacity: 0;\n")
-	b.Write("  }\n")
-	b.Write("}\n\n")
+::view-transition-old(root) {
+	animation: 150ms cubic-bezier(0.4, 0, 1, 1) both fade-out;
+}
 
-	b.Write("::view-transition-old(root) {\n")
-	b.Write("  animation: 150ms cubic-bezier(0.4, 0, 1, 1) both fade-out;\n")
-	b.Write("}\n\n")
-
-	b.Write("::view-transition-new(root) {\n")
-	b.Write("  animation: 300ms cubic-bezier(0, 0, 0.2, 1) both fade-in;\n")
-	b.Write("}\n\n")
-
-	return b.String()
+::view-transition-new(root) {
+	animation: 300ms cubic-bezier(0, 0, 0.2, 1) both fade-in;
+}
+`
 }
 
 // RenderJS generates the JavaScript for view transitions
 func (n *NavbarBuilder) RenderJS() string {
-	var b = Convert()
+	return `// View Transition API for smooth page navigation
+(function() {
+	// Check if View Transition API is supported
+	if (!document.startViewTransition) {
+		return; // Fallback to normal navigation
+	}
 
-	b.Write("// View Transition API for smooth page navigation\n")
-	b.Write("(function() {\n")
-	b.Write("  // Check if View Transition API is supported\n")
-	b.Write("  if (!document.startViewTransition) {\n")
-	b.Write("    return; // Fallback to normal navigation\n")
-	b.Write("  }\n\n")
+	// Intercept navigation link clicks
+	document.addEventListener('click', function(e) {
+		const link = e.target.closest('a');
 
-	b.Write("  // Intercept navigation link clicks\n")
-	b.Write("  document.addEventListener('click', function(e) {\n")
-	b.Write("    const link = e.target.closest('a');\n")
-	b.Write("    \n")
-	b.Write("    // Only handle internal navigation links\n")
-	b.Write("    if (!link || !link.href || link.target === '_blank') return;\n")
-	b.Write("    \n")
-	b.Write("    const url = new URL(link.href);\n")
-	b.Write("    \n")
-	b.Write("    // Check if it's a same-origin navigation\n")
-	b.Write("    if (url.origin !== location.origin) return;\n")
-	b.Write("    \n")
-	b.Write("    // Prevent default navigation\n")
-	b.Write("    e.preventDefault();\n")
-	b.Write("    \n")
-	b.Write("    // Start view transition\n")
-	b.Write("    document.startViewTransition(async () => {\n")
-	b.Write("      // Fetch the new page\n")
-	b.Write("      const response = await fetch(url.href);\n")
-	b.Write("      const html = await response.text();\n")
-	b.Write("      \n")
-	b.Write("      // Parse the HTML\n")
-	b.Write("      const parser = new DOMParser();\n")
-	b.Write("      const doc = parser.parseFromString(html, 'text/html');\n")
-	b.Write("      \n")
-	b.Write("      // Update the document title\n")
-	b.Write("      document.title = doc.title;\n")
-	b.Write("      \n")
-	b.Write("      // Replace the main content\n")
-	b.Write("      const newMain = doc.querySelector('main');\n")
-	b.Write("      const currentMain = document.querySelector('main');\n")
-	b.Write("      \n")
-	b.Write("      if (newMain && currentMain) {\n")
-	b.Write("        currentMain.replaceWith(newMain);\n")
-	b.Write("      } else {\n")
-	b.Write("        // Fallback: replace entire body content\n")
-	b.Write("        document.body.innerHTML = doc.body.innerHTML;\n")
-	b.Write("      }\n")
-	b.Write("      \n")
-	b.Write("      // Update the URL\n")
-	b.Write("      history.pushState({}, '', url.href);\n")
-	b.Write("      \n")
-	b.Write("      // Re-attach event listeners after DOM update\n")
-	b.Write("      initializeEventListeners();\n")
-	b.Write("    });\n")
-	b.Write("  });\n\n")
+		// Only handle internal navigation links
+		if (!link || !link.href || link.target === '_blank') return;
 
-	b.Write("  // Handle browser back/forward buttons\n")
-	b.Write("  window.addEventListener('popstate', function() {\n")
-	b.Write("    document.startViewTransition(async () => {\n")
-	b.Write("      const response = await fetch(location.href);\n")
-	b.Write("      const html = await response.text();\n")
-	b.Write("      const parser = new DOMParser();\n")
-	b.Write("      const doc = parser.parseFromString(html, 'text/html');\n")
-	b.Write("      \n")
-	b.Write("      document.title = doc.title;\n")
-	b.Write("      \n")
-	b.Write("      const newMain = doc.querySelector('main');\n")
-	b.Write("      const currentMain = document.querySelector('main');\n")
-	b.Write("      \n")
-	b.Write("      if (newMain && currentMain) {\n")
-	b.Write("        currentMain.replaceWith(newMain);\n")
-	b.Write("      } else {\n")
-	b.Write("        document.body.innerHTML = doc.body.innerHTML;\n")
-	b.Write("      }\n")
-	b.Write("      \n")
-	b.Write("      initializeEventListeners();\n")
-	b.Write("    });\n")
-	b.Write("  });\n\n")
+		const url = new URL(link.href);
 
-	b.Write("  // Function to reinitialize event listeners after DOM updates\n")
-	b.Write("  function initializeEventListeners() {\n")
-	b.Write("    // Re-attach any component-specific event listeners here\n")
-	b.Write("    // This ensures interactive elements work after page transitions\n")
-	b.Write("  }\n")
-	b.Write("})();\n\n")
+		// Check if it's a same-origin navigation
+		if (url.origin !== location.origin) return;
 
-	return b.String()
+		// Prevent default navigation
+		e.preventDefault();
+
+		// Start view transition
+		document.startViewTransition(async () => {
+			// Fetch the new page
+			const response = await fetch(url.href);
+			const html = await response.text();
+
+			// Parse the HTML
+			const parser = new DOMParser();
+			const doc = parser.parseFromString(html, 'text/html');
+
+			// Update the document title
+			document.title = doc.title;
+
+			// Replace the main content
+			const newMain = doc.querySelector('main');
+			const currentMain = document.querySelector('main');
+
+			if (newMain && currentMain) {
+				currentMain.replaceWith(newMain);
+			} else {
+				// Fallback: replace entire body content
+				document.body.innerHTML = doc.body.innerHTML;
+			}
+
+			// Update the URL
+			history.pushState({}, '', url.href);
+
+			// Re-attach event listeners after DOM update
+			initializeEventListeners();
+		});
+	});
+
+	// Handle browser back/forward buttons
+	window.addEventListener('popstate', function() {
+		document.startViewTransition(async () => {
+			const response = await fetch(location.href);
+			const html = await response.text();
+			const parser = new DOMParser();
+			const doc = parser.parseFromString(html, 'text/html');
+
+			document.title = doc.title;
+
+			const newMain = doc.querySelector('main');
+			const currentMain = document.querySelector('main');
+
+			if (newMain && currentMain) {
+				currentMain.replaceWith(newMain);
+			} else {
+				document.body.innerHTML = doc.body.innerHTML;
+			}
+
+			initializeEventListeners();
+		});
+	});
+
+	// Function to reinitialize event listeners after DOM updates
+	function initializeEventListeners() {
+		// Re-attach any component-specific event listeners here
+		// This ensures interactive elements work after page transitions
+	}
+})();
+`
 }
