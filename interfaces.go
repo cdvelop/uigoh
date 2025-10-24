@@ -7,3 +7,10 @@ type SiteLink interface {
 	AddCSS(css string)
 	AddJS(js string)
 }
+
+// Component is an interface for all UI components.
+type Component interface {
+	RenderHTML() string
+	RenderCSS() string
+	RenderJS() string
+}

@@ -4,18 +4,33 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-type writerFile interface {
-	WriteFile(name string, data []byte, perm uint32) error
+// ColorScheme holds the basic color configuration for the site.
+type ColorScheme struct {
+	Primary    string // Main brand color
+	Secondary  string // Secondary/accent color
+	Text       string // Main text color
+	Background string // Background color
+	Border     string // Border color
+}
+
+// DefaultColorScheme returns the default color scheme based on monjitaschillan.cl
+func DefaultColorScheme() *ColorScheme {
+	return &ColorScheme{
+		Primary:    "#3f88bf", // Blue
+		Secondary:  "#ff9300", // Orange
+		Text:       "#000000", // Black
+		Background: "#ffffff", // White
+		Border:     "#e9e9e9", // Light gray
+	}
 }
 
 // Config holds the configuration for the site.
 type Config struct {
-	Title     string
-	OutputDir string // eg: "dist"
-	// 	type writerFile interface {
-	//     WriteFile(name string, data []byte, perm uint32) error
-	// }
-	WriteFile writerFile
+	Title       string
+	OutputDir   string // eg: "dist"
+	ColorScheme *ColorScheme
+
+	WriteFile func(path string, content string) error
 }
 
 // Site manages the global state of the website, including pages, assets, etc.
@@ -33,6 +48,11 @@ type Site struct {
 
 // NewSite creates a new site manager.
 func NewSite(cfg *Config) *Site {
+	// Set default color scheme if not provided
+	if cfg.ColorScheme == nil {
+		cfg.ColorScheme = DefaultColorScheme()
+	}
+
 	return &Site{
 		Cfg:       cfg,
 		pages:     make([]*page, 0),
@@ -58,25 +78,25 @@ func (s *Site) PageCount() int {
 	return len(s.pages)
 }
 
-// BuildNav creates the navigation menu.
+// BuildNav creates the navigation menu using NavbarBuilder.
 func (s *Site) BuildNav() string {
-	s.buff.Reset()
-	s.buff.Write("<nav class=\"main-nav\">\n")
-	for _, page := range s.pages {
-		s.buff.Write("  <a href=\"")
-		s.buff.Write(Convert(page.filename).EscapeAttr())
-		s.buff.Write("\" class=\"nav-link\">")
-		s.buff.Write(Convert(page.title).EscapeHTML())
-		s.buff.Write("</a>\n")
-	}
-	s.buff.Write("</nav>\n")
-	return s.buff.String()
+	nav := &NavbarBuilder{site: s}
+	// Register navbar CSS once
+	s.AddCSS(nav.RenderCSS())
+	return nav.Render()
 }
 
 // AddCSS accumulates CSS with deduplication at the site level.
 func (s *Site) AddCSS(css string) {
 	if css == "" {
 		return
+	}
+
+	// Check if this CSS block already exists
+	for _, existing := range s.cssBlocks {
+		if existing.Content == css {
+			return // Already added, skip duplicate
+		}
 	}
 
 	s.cssBlocks = append(s.cssBlocks, assetBlock{Content: css})
@@ -88,6 +108,13 @@ func (s *Site) AddJS(js string) {
 		return
 	}
 
+	// Check if this JS block already exists
+	for _, existing := range s.jsBlocks {
+		if existing.Content == js {
+			return // Already added, skip duplicate
+		}
+	}
+
 	s.jsBlocks = append(s.jsBlocks, assetBlock{Content: js})
 }
 
@@ -96,12 +123,12 @@ func (s *Site) Generate() error {
 
 	for _, page := range s.pages {
 		pagePath := PathJoin(s.Cfg.OutputDir, page.filename)
-		if err := s.Cfg.WriteFile.WriteFile(pagePath, []byte(page.RenderHTML()), 0644); err != nil {
+		if err := s.Cfg.WriteFile(pagePath, page.RenderHTML()); err != nil {
 			return err
 		}
 	}
 
-	if err := s.writeCSS(); err != nil {
+	if err := s.writeCSSFiles(); err != nil {
 		return err
 	}
 	if err := s.writeJS(); err != nil {
@@ -110,15 +137,99 @@ func (s *Site) Generate() error {
 	return nil
 }
 
-// writeCSS writes the combined and deduplicated CSS to a file.
-func (s *Site) writeCSS() error {
+// generateBaseCSS generates the base CSS with variables and reset styles
+func (s *Site) generateBaseCSS() string {
+	cs := s.Cfg.ColorScheme
 	s.buff.Reset()
+
+	// CSS Variables
+	s.buff.Write(":root {\n")
+	s.buff.Write("  --color-primary: ")
+	s.buff.Write(cs.Primary)
+	s.buff.Write(";\n")
+	s.buff.Write("  --color-secondary: ")
+	s.buff.Write(cs.Secondary)
+	s.buff.Write(";\n")
+	s.buff.Write("  --color-text: ")
+	s.buff.Write(cs.Text)
+	s.buff.Write(";\n")
+	s.buff.Write("  --color-background: ")
+	s.buff.Write(cs.Background)
+	s.buff.Write(";\n")
+	s.buff.Write("  --color-border: ")
+	s.buff.Write(cs.Border)
+	s.buff.Write(";\n")
+	s.buff.Write("  --color-heading: ")
+	s.buff.Write(cs.Primary)
+	s.buff.Write(";\n")
+	s.buff.Write("  --color-card-bg: ")
+	s.buff.Write(cs.Background)
+	s.buff.Write(";\n")
+	s.buff.Write("}\n\n")
+
+	// CSS Reset
+	s.buff.Write("*, *::before, *::after {\n")
+	s.buff.Write("  box-sizing: border-box;\n")
+	s.buff.Write("  margin: 0;\n")
+	s.buff.Write("  padding: 0;\n")
+	s.buff.Write("}\n\n")
+
+	// Base styles
+	s.buff.Write("body {\n")
+	s.buff.Write("  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;\n")
+	s.buff.Write("  background: var(--color-background);\n")
+	s.buff.Write("  color: var(--color-text);\n")
+	s.buff.Write("  line-height: 1.6;\n")
+	s.buff.Write("  padding: 0;\n")
+	s.buff.Write("  margin: 0;\n")
+	s.buff.Write("}\n\n")
+
+	// Section styles
+	s.buff.Write("section {\n")
+	s.buff.Write("  padding: 2rem;\n")
+	s.buff.Write("  max-width: 1200px;\n")
+	s.buff.Write("  margin: 0 auto;\n")
+	s.buff.Write("}\n\n")
+
+	s.buff.Write("h1 {\n")
+	s.buff.Write("  color: var(--color-heading);\n")
+	s.buff.Write("  font-size: 2.5rem;\n")
+	s.buff.Write("  margin-bottom: 1.5rem;\n")
+	s.buff.Write("  text-align: center;\n")
+	s.buff.Write("}\n\n")
+
+	s.buff.Write("h2 {\n")
+	s.buff.Write("  color: var(--color-heading);\n")
+	s.buff.Write("  font-size: 2rem;\n")
+	s.buff.Write("  margin-bottom: 1rem;\n")
+	s.buff.Write("}\n\n")
+
+	// Card container (grid layout)
+	s.buff.Write(".card-container {\n")
+	s.buff.Write("  display: grid;\n")
+	s.buff.Write("  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));\n")
+	s.buff.Write("  gap: 1.5rem;\n")
+	s.buff.Write("  margin-top: 2rem;\n")
+	s.buff.Write("}\n\n")
+
+	return s.buff.String()
+}
+
+// writeCSSFiles writes separate CSS files (base + components)
+func (s *Site) writeCSSFiles() error {
+	s.buff.Reset()
+
+	// Write base CSS (variables + reset + layout)
+	s.buff.Write(s.generateBaseCSS())
+
+	// Add component CSS
 	for _, b := range s.cssBlocks {
 		s.buff.Write(b.Content)
 		s.buff.Write("\n")
 	}
+
 	cssPath := PathJoin(s.Cfg.OutputDir, "style.css")
-	return s.Cfg.WriteFile.WriteFile(cssPath, []byte(s.buff.String()), 0644)
+	return s.Cfg.WriteFile(cssPath, s.buff.String())
 }
 
 // writeJS writes the combined and deduplicated JS to a file.
@@ -129,5 +240,5 @@ func (s *Site) writeJS() error {
 		s.buff.Write("\n")
 	}
 	jsPath := PathJoin(s.Cfg.OutputDir, "script.js")
-	return s.Cfg.WriteFile.WriteFile(jsPath, []byte(s.buff.String()), 0644)
+	return s.Cfg.WriteFile(jsPath, s.buff.String())
 }

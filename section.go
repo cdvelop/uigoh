@@ -13,13 +13,6 @@ type SectionBuilder struct {
 	content  []Component
 }
 
-// Component is an interface for all UI components.
-type Component interface {
-	RenderHTML() string
-	RenderCSS() string
-	RenderJS() string
-}
-
 // Add appends a new component to the section.
 func (s *SectionBuilder) Add(component Component) *SectionBuilder {
 	s.content = append(s.content, component)
