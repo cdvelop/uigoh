@@ -17,17 +17,19 @@ type Carousel struct {
 
 // RenderHTML generates the HTML for the carousel.
 func (c *Carousel) RenderHTML() string {
-	var b = Convert()
-	b.Write("<div class=\"carousel\">\n")
+	// Build items HTML
+	items := ""
 	for _, img := range c.Images {
-		b.Write("  <div class=\"carousel-item\"><img src=\"")
-		b.Write(Convert(img.Src).EscapeAttr())
-		b.Write("\" alt=\"")
-		b.Write(Convert(img.Alt).EscapeAttr())
-		b.Write("\"></div>\n")
+		src := Convert(img.Src).EscapeAttr()
+		alt := Convert(img.Alt).EscapeAttr()
+		items += Fmt("  <div class=\"carousel-item\"><img src=\"%s\" alt=\"%s\"></div>\n", src, alt)
 	}
-	b.Write("</div>\n")
-	return b.String()
+
+	tpl := `<div class="carousel">
+%s</div>
+`
+
+	return Fmt(tpl, items)
 }
 
 // RenderCSS returns the CSS for the carousel.

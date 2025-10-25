@@ -14,30 +14,29 @@ type Card struct {
 
 // RenderHTML generates the HTML for the card.
 func (c *Card) RenderHTML() string {
-	var b = Convert()
+	// Build escaped values first
 	class := "card"
 	if c.CSSClass != "" {
 		class += " " + c.CSSClass
 	}
-	b.Write("<div class=\"")
-	b.Write(Convert(class).EscapeAttr())
-	b.Write("\">\n")
 
+	classEsc := Convert(class).EscapeAttr()
+	titleEsc := Convert(c.Title).EscapeHTML()
+	descEsc := Convert(c.Description).EscapeHTML()
+
+	iconHTML := ""
 	if c.Icon != "" {
-		b.Write("  <svg class=\"icon\"><use href=\"icons.svg#")
-		b.Write(Convert(c.Icon).EscapeAttr())
-		b.Write("\"></use></svg>\n")
+		iconEsc := Convert(c.Icon).EscapeAttr()
+		iconHTML = Fmt("  <svg class=\"icon\"><use href=\"icons.svg#%s\"></use></svg>\n", iconEsc)
 	}
-	b.Write("  <h3>")
-	b.Write(Convert(c.Title).EscapeHTML())
-	b.Write("</h3>\n")
 
-	b.Write("  <p>")
-	b.Write(Convert(c.Description).EscapeHTML())
-	b.Write("</p>\n")
+	tpl := `<div class="%s">
+%s  <h3>%s</h3>
+  <p>%s</p>
+</div>
+`
 
-	b.Write("</div>\n")
-	return b.String()
+	return Fmt(tpl, classEsc, iconHTML, titleEsc, descEsc)
 }
 
 // RenderCSS returns the CSS for the card.

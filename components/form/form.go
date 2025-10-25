@@ -26,36 +26,30 @@ type Form struct {
 
 // RenderHTML generates the HTML for the form.
 func (f *Form) RenderHTML() string {
-	var b = Convert()
-	b.Write("<form class=\"contact-form\" action=\"")
-	b.Write(Convert(f.Config.Action).EscapeAttr())
-	b.Write("\" method=\"")
-	b.Write(Convert(f.Config.Method).EscapeAttr())
-	b.Write("\">\n")
+	// Build fields HTML
+	fields := ""
 	for _, field := range f.Config.Fields {
+		name := Convert(field.Name).EscapeAttr()
+		placeholder := Convert(field.Placeholder).EscapeAttr()
 		if field.Type == "textarea" {
-			b.Write("  <textarea name=\"")
-			b.Write(Convert(field.Name).EscapeAttr())
-			b.Write("\" placeholder=\"")
-			b.Write(Convert(field.Placeholder).EscapeAttr())
-			b.Write("\"")
-			b.Write(boolAttr("required", field.Required))
-			b.Write("></textarea>\n")
+			req := boolAttr("required", field.Required)
+			fields += Fmt("  <textarea name=\"%s\" placeholder=\"%s\"%s></textarea>\n", name, placeholder, req)
 		} else {
-			b.Write("<input type=\"")
-			b.Write(Convert(field.Type).EscapeAttr())
-			b.Write("\" name=\"")
-			b.Write(Convert(field.Name).EscapeAttr())
-			b.Write("\" placeholder=\"")
-			b.Write(Convert(field.Placeholder).EscapeAttr())
-			b.Write("\"")
-			b.Write(boolAttr("required", field.Required))
-			b.Write(">\n")
+			t := Convert(field.Type).EscapeAttr()
+			req := boolAttr("required", field.Required)
+			fields += Fmt("  <input type=\"%s\" name=\"%s\" placeholder=\"%s\"%s>\n", t, name, placeholder, req)
 		}
 	}
-	b.Write("  <button type=\"submit\">Enviar Mensaje</button>\n")
-	b.Write("</form>\n")
-	return b.String()
+
+	action := Convert(f.Config.Action).EscapeAttr()
+	method := Convert(f.Config.Method).EscapeAttr()
+
+	tpl := `<form class="contact-form" action="%s" method="%s">
+%s  <button type="submit">Enviar Mensaje</button>
+</form>
+`
+
+	return Fmt(tpl, action, method, fields)
 }
 
 func boolAttr(attr string, val bool) string {
@@ -94,36 +88,5 @@ func (f *Form) RenderCSS() string {
 .contact-form button:hover {
   opacity: 0.9;
 }
-`
-}
-
-// RenderJS returns the JavaScript for the form.
-func (f *Form) RenderJS() string {
-	return `// Simple form validation
-document.addEventListener('DOMContentLoaded', function() {
-    const forms = document.querySelectorAll('.contact-form');
-    forms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            let isValid = true;
-            const requiredFields = form.querySelectorAll('[required]');
-
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    isValid = false;
-                    // You might want to add a class to highlight the invalid field
-                    field.style.borderColor = 'red';
-                } else {
-                    field.style.borderColor = ''; // Reset border color
-                }
-            });
-
-            if (!isValid) {
-                e.preventDefault(); // Stop form submission
-                // You could also display a general error message to the user
-                console.log('Please fill out all required fields.');
-            }
-        });
-    });
-});
 `
 }

@@ -1,6 +1,8 @@
 package gosite
 
 import (
+	"fmt"
+
 	. "github.com/cdvelop/tinystring"
 )
 
@@ -33,41 +35,42 @@ func (p *page) AddHead(content string) *page {
 
 // RenderHTML generates the complete HTML for the page.
 func (p *page) RenderHTML() string {
-	var b = Convert()
-
-	b.Write("<!DOCTYPE html>\n")
-	b.Write("<html lang=\"es\">\n")
-	b.Write("<head>\n")
-	b.Write("  <meta charset=\"UTF-8\">\n")
-	b.Write("  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n")
-	b.Write("  <title>")
-	b.Write(Convert(p.title).EscapeHTML())
-	b.Write("</title>\n")
-	b.Write("  <link rel=\"stylesheet\" href=\"style.css\">\n")
-
+	// Build head entries
+	headHTML := ""
 	for _, h := range p.head {
-		b.Write("  ")
-		b.Write(h)
-		b.Write("\n")
+		headHTML += "  " + h + "\n"
 	}
 
-	b.Write("</head>\n")
-	b.Write("<body>\n")
-
-	// Render navigation if any pages are registered
-	if p.site.PageCount() > 1 {
-		b.Write(p.site.BuildNav())
-	}
-
-	b.Write("  <main class=\"content\">\n")
+	// Build sections
+	sectionsHTML := ""
 	for _, section := range p.sections {
-		b.Write(section.Render())
+		sectionsHTML += section.Render()
 	}
-	b.Write("  </main>\n")
 
-	b.Write("  <script src=\"script.js\"></script>\n")
-	b.Write("</body>\n")
-	b.Write("</html>\n")
+	title := Convert(p.title).EscapeHTML()
 
-	return b.String()
+	tpl := `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>%s</title>
+  <link rel="stylesheet" href="style.css">
+%s</head>
+<body>
+%s  <main class="content">
+%s  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+`
+
+	// Optionally include nav if multiple pages exist
+	navHTML := ""
+	if p.site.PageCount() > 1 {
+		navHTML = p.site.BuildNav()
+	}
+
+	return fmt.Sprintf(tpl, title, headHTML, navHTML, sectionsHTML)
 }

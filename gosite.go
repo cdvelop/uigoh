@@ -141,79 +141,69 @@ func (s *Site) Generate() error {
 // generateBaseCSS generates the base CSS with variables and reset styles
 func (s *Site) generateBaseCSS() string {
 	cs := s.Cfg.ColorScheme
-	s.buff.Reset()
 
-	// CSS Variables
-	s.buff.Write(":root {\n")
-	s.buff.Write("  --color-primary: ")
-	s.buff.Write(cs.Primary)
-	s.buff.Write(";\n")
-	s.buff.Write("  --color-secondary: ")
-	s.buff.Write(cs.Secondary)
-	s.buff.Write(";\n")
-	s.buff.Write("  --color-text: ")
-	s.buff.Write(cs.Text)
-	s.buff.Write(";\n")
-	s.buff.Write("  --color-background: ")
-	s.buff.Write(cs.Background)
-	s.buff.Write(";\n")
-	s.buff.Write("  --color-border: ")
-	s.buff.Write(cs.Border)
-	s.buff.Write(";\n")
-	s.buff.Write("  --color-heading: ")
-	s.buff.Write(cs.Primary)
-	s.buff.Write(";\n")
-	s.buff.Write("  --color-card-bg: ")
-	s.buff.Write(cs.Background)
-	s.buff.Write(";\n")
-	s.buff.Write("}\n\n")
+	tpl := `:root {
+	--color-primary: %s;
+	--color-secondary: %s;
+	--color-text: %s;
+	--color-background: %s;
+	--color-border: %s;
+	--color-heading: %s;
+	--color-card-bg: %s;
+}
 
-	// CSS Reset
-	s.buff.Write("*, *::before, *::after {\n")
-	s.buff.Write("  box-sizing: border-box;\n")
-	s.buff.Write("  margin: 0;\n")
-	s.buff.Write("  padding: 0;\n")
-	s.buff.Write("}\n\n")
+*, *::before, *::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
 
-	// Base styles
-	s.buff.Write("body {\n")
-	s.buff.Write("  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;\n")
-	s.buff.Write("  background: var(--color-background);\n")
-	s.buff.Write("  color: var(--color-text);\n")
-	s.buff.Write("  line-height: 1.6;\n")
-	s.buff.Write("  padding: 0;\n")
-	s.buff.Write("  margin: 0;\n")
-	s.buff.Write("}\n\n")
+body {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	background: var(--color-background);
+	color: var(--color-text);
+	line-height: 1.6;
+	padding: 0;
+	margin: 0;
+}
 
-	// Section styles
-	s.buff.Write("section {\n")
-	s.buff.Write("  padding: 2rem;\n")
-	s.buff.Write("  max-width: 1200px;\n")
-	s.buff.Write("  margin: 0 auto;\n")
-	s.buff.Write("}\n\n")
+section {
+	padding: 2rem;
+	max-width: 1200px;
+	margin: 0 auto;
+}
 
-	s.buff.Write("h1 {\n")
-	s.buff.Write("  color: var(--color-heading);\n")
-	s.buff.Write("  font-size: 2.5rem;\n")
-	s.buff.Write("  margin-bottom: 1.5rem;\n")
-	s.buff.Write("  text-align: center;\n")
-	s.buff.Write("}\n\n")
+h1 {
+	color: var(--color-heading);
+	font-size: 2.5rem;
+	margin-bottom: 1.5rem;
+	text-align: center;
+}
 
-	s.buff.Write("h2 {\n")
-	s.buff.Write("  color: var(--color-heading);\n")
-	s.buff.Write("  font-size: 2rem;\n")
-	s.buff.Write("  margin-bottom: 1rem;\n")
-	s.buff.Write("}\n\n")
+h2 {
+	color: var(--color-heading);
+	font-size: 2rem;
+	margin-bottom: 1rem;
+}
 
-	// Card container (grid layout)
-	s.buff.Write(".card-container {\n")
-	s.buff.Write("  display: grid;\n")
-	s.buff.Write("  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));\n")
-	s.buff.Write("  gap: 1.5rem;\n")
-	s.buff.Write("  margin-top: 2rem;\n")
-	s.buff.Write("}\n\n")
+/* Card container (grid layout) */
+.card-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 1.5rem;
+	margin-top: 2rem;
+}
+`
 
-	return s.buff.String()
+	return Fmt(tpl,
+		cs.Primary,
+		cs.Secondary,
+		cs.Text,
+		cs.Background,
+		cs.Border,
+		cs.Primary,
+		cs.Background,
+	)
 }
 
 // writeCSSFile writes separate CSS files (base + components)

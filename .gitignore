@@ -1,3 +1,4 @@
 # Ignore persistent test output created by unit tests
 output/
 docs/references/
+/src/
