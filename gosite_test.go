@@ -33,7 +33,7 @@ func TestGenerateExample(t *testing.T) {
 		},
 	}
 
-	site := gosite.NewSite(cfg)
+	site := gosite.New(cfg)
 
 	// Home page
 	homePage := site.NewPage("Home Page", "index.html")

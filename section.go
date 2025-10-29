@@ -4,25 +4,26 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-// SectionBuilder handles the construction of a page section.
-type SectionBuilder struct {
-	page     *page
+// Section handles the construction of a page section.
+// Its fields are unexported to maintain a controlled, fluent API.
+type Section struct {
+	page     *Page
 	site     SiteLink
 	Title    string
 	ModuleID string
 	content  []any
 }
 
-// Add appends a new component to the section.
-func (s *SectionBuilder) Add(component any) *SectionBuilder {
+// Add appends a new component to the section and returns the section for chaining.
+func (s *Section) Add(component any) *Section {
 	s.content = append(s.content, component)
 
-	// Cast and handle CSS if component implements CSSRenderer
+	// Cast and handle CSS if the component implements CSSRenderer.
 	if cssRenderer, ok := component.(CSSRenderer); ok {
 		s.site.AddCSS(cssRenderer.RenderCSS())
 	}
 
-	// Cast and handle JS if component implements JSRenderer
+	// Cast and handle JS if the component implements JSRenderer.
 	if jsRenderer, ok := component.(JSRenderer); ok {
 		s.site.AddJS(jsRenderer.RenderJS())
 	}
@@ -31,10 +32,11 @@ func (s *SectionBuilder) Add(component any) *SectionBuilder {
 }
 
 // Render generates the section's HTML.
-func (s *SectionBuilder) Render() string {
-	var b = Convert()
+func (s *Section) Render() string {
+	b := Convert()
 	id := s.ModuleID
 	if id == "" {
+		// Generate a default ID from the title if none is provided.
 		id = Convert(s.Title).ToLower().Replace(" ", "-").String()
 	}
 	b.Write("<section id=\"")
@@ -48,7 +50,7 @@ func (s *SectionBuilder) Render() string {
 	}
 	b.Write("  <div class=\"card-container\">\n")
 	for _, item := range s.content {
-		// Only render HTML if component implements HTMLRenderer
+		// Only render HTML if the component implements HTMLRenderer.
 		if htmlRenderer, ok := item.(HTMLRenderer); ok {
 			b.Write("    ")
 			b.Write(htmlRenderer.RenderHTML())
