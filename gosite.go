@@ -123,7 +123,7 @@ func (s *Site) AddJS(js string) {
 func (s *Site) Generate() error {
 
 	for _, page := range s.pages {
-		pagePath := PathJoin(s.Cfg.OutputDir, page.filename)
+		pagePath := PathJoin(s.Cfg.OutputDir, page.filename).String()
 		if err := s.Cfg.WriteFile(pagePath, page.RenderHTML()); err != nil {
 			return err
 		}
@@ -219,7 +219,7 @@ func (s *Site) writeCSSFile() error {
 		s.buff.Write("\n")
 	}
 
-	cssPath := PathJoin(s.Cfg.OutputDir, "style.css")
+	cssPath := PathJoin(s.Cfg.OutputDir, "style.css").String()
 	return s.Cfg.WriteFile(cssPath, s.buff.String())
 }
 
@@ -230,6 +230,6 @@ func (s *Site) writeJSFile() error {
 		s.buff.Write(b.Content)
 		s.buff.Write("\n")
 	}
-	jsPath := PathJoin(s.Cfg.OutputDir, "script.js")
+	jsPath := PathJoin(s.Cfg.OutputDir, "script.js").String()
 	return s.Cfg.WriteFile(jsPath, s.buff.String())
 }

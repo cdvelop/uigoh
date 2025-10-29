@@ -8,6 +8,12 @@ type SiteLink interface {
 	AddJS(js string)
 }
 
+// EventBinder adds or removes an event listener from a DOM element.
+// The implementation will use syscall/js to interact with the DOM.
+type EventBinder interface {
+	EventListener(add bool, elementID, eventType string, callback func())
+}
+
 // HTMLRenderer is an interface for components that render HTML.
 type HTMLRenderer interface {
 	RenderHTML() string
