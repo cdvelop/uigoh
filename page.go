@@ -1,53 +1,63 @@
 package gosite
 
 import (
-	"fmt"
-
 	. "github.com/cdvelop/tinystring"
 )
 
-// page represents a single HTML page and is the root of the site structure.
-// It's unexported to keep the package API encapsulated.
-type page struct {
+// Page represents a single HTML page. Its fields are unexported to maintain
+// a controlled, fluent API.
+type Page struct {
 	site     SiteLink
-	sections []*SectionBuilder
+	sections []*Section
 	title    string
 	filename string
 	head     []string
 }
 
-// NewSection adds a new section to the page and returns a builder for it.
-func (p *page) NewSection(title string) *SectionBuilder {
-	section := &SectionBuilder{
-		page:  p,
-		site:  p.site,
-		Title: title,
+// NewSection adds a new section to the page and returns it for chaining.
+func (p *Page) NewSection(title string) *Section {
+	section := &Section{
+		page:    p,
+		site:    p.site,
+		Title:   title,
+		content: make([]any, 0),
 	}
 	p.sections = append(p.sections, section)
 	return section
 }
 
 // AddHead adds content to the <head> section of the page.
-func (p *page) AddHead(content string) *page {
+func (p *Page) AddHead(content string) *Page {
 	p.head = append(p.head, content)
 	return p
 }
 
 // RenderHTML generates the complete HTML for the page.
-func (p *page) RenderHTML() string {
+func (p *Page) RenderHTML() string {
+	b := Convert()
+
 	// Build head entries
-	headHTML := ""
 	for _, h := range p.head {
-		headHTML += "  " + h + "\n"
+		b.Write("  ")
+		b.Write(h)
+		b.Write("\n")
 	}
+	headHTML := b.String()
 
 	// Build sections
-	sectionsHTML := ""
+	b.Reset()
 	for _, section := range p.sections {
-		sectionsHTML += section.Render()
+		b.Write(section.Render())
 	}
+	sectionsHTML := b.String()
 
 	title := Convert(p.title).EscapeHTML()
+
+	// Optionally include nav if multiple pages exist
+	navHTML := ""
+	if p.site.PageCount() > 1 {
+		navHTML = p.site.BuildNav()
+	}
 
 	tpl := `<!DOCTYPE html>
 <html lang="es">
@@ -60,17 +70,9 @@ func (p *page) RenderHTML() string {
 <body>
 %s  <main class="content">
 %s  </main>
-
   <script src="script.js"></script>
 </body>
 </html>
 `
-
-	// Optionally include nav if multiple pages exist
-	navHTML := ""
-	if p.site.PageCount() > 1 {
-		navHTML = p.site.BuildNav()
-	}
-
-	return fmt.Sprintf(tpl, title, headHTML, navHTML, sectionsHTML)
+	return Fmt(tpl, title, headHTML, navHTML, sectionsHTML)
 }
