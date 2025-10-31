@@ -14,7 +14,7 @@ func New(cfg *Config) *Site {
 	if cfg.ColorScheme == nil {
 		cfg.ColorScheme = DefaultColorScheme()
 	}
--	return &Site{
+	return &Site{
 		Cfg:   cfg,
 		pages: make([]*Page, 0),
 	}
