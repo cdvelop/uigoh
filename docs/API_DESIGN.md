@@ -1,4 +1,4 @@
-# API Design Principles
+)# API Design Principles
 
 ## 1. Core Philosophy: Write Once, Run Anywhere
 
@@ -88,4 +88,4 @@ To ensure minimal binary sizes and compatibility with TinyGo, the core `gosite` 
 
 - **`tinystring` is mandatory**: All string manipulation, formatting, and path operations **must** use the `github.com/cdvelop/tinystring` package.
 - **Forbidden Packages**: The use of standard packages like `fmt`, `strings`, `strconv`, `errors`, `path`, and `bytes` is **disallowed**.
-- **Error Handling**: Errors are handled by returning `(bool, string)` tuples or simple error strings, avoiding the standard `error` interface.
+- **Error Handling**: Errors are handled by returning the standard `error` interface.
