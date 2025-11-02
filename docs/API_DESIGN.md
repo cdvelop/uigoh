@@ -45,7 +45,44 @@ The smallest unit of the UI is the **component**. Every component must implement
 
 When a component is added to a section, the `gosite` framework automatically collects and deduplicates its CSS and JS for final bundling (in the backend).
 
-## 5. Dependency Constraints for TinyGo/WASM
+## 5. Decoupling with Interfaces
+
+To maintain a clean architecture and prevent circular dependencies, `gosite` uses two key interfaces to mediate communication between different parts of the framework.
+
+### `EventBinder`: Abstracting DOM Interaction
+
+For frontend (`wasm`) builds, components often need to respond to user interactions like clicks or input changes. To keep the core component logic independent of the browser's `syscall/js` API, `gosite` uses the `EventBinder` interface.
+
+- **Purpose**: To provide a formal, testable way for components to request DOM event listeners without directly depending on browser-specific code.
+- **Implementation**: The user provides a concrete implementation of this interface in their `gosite.Config` when setting up a frontend application.
+
+```go
+// The EventBinder interface, defined in interfaces.go
+type EventBinder interface {
+    EventListener(add bool, elementID, eventType string, callback func())
+}
+```
+
+### `SiteLink`: Preventing Circular Dependencies
+
+Components, pages, and sections often need to communicate "up" to the main `Site` object—for example, to add CSS/JS assets or get site-wide information. A direct dependency (`*gosite.Site`) would create a circular import cycle.
+
+The `SiteLink` interface solves this by exposing only a minimal, stable set of methods from the `Site` object.
+
+- **Purpose**: To allow child elements (like components and pages) to safely interact with the site manager without creating import cycles.
+- **Implementation**: The `*gosite.Site` object implements this interface, and a `SiteLink` is passed down to its children.
+
+```go
+// The SiteLink interface, defined in interfaces.go
+type SiteLink interface {
+    PageCount() int
+    BuildNav() string
+    AddCSS(css string)
+    AddJS(js string)
+}
+```
+
+## 6. Dependency Constraints for TinyGo/WASM
 
 To ensure minimal binary sizes and compatibility with TinyGo, the core `gosite` library adheres to a strict dependency policy:
 
