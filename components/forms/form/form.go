@@ -4,24 +4,24 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-// FormField defines a single field within a form.
-type FormField struct {
+// Field defines a single field within a form.
+type Field struct {
 	Type        string
 	Name        string
 	Placeholder string
 	Required    bool
 }
 
-// FormConfig holds the configuration for a form.
-type FormConfig struct {
+// Config holds the configuration for a form.
+type Config struct {
 	Action string
 	Method string
-	Fields []FormField
+	Fields []Field
 }
 
 // Form implements HTMLRenderer, CSSRenderer, and JSRenderer interfaces.
 type Form struct {
-	Config FormConfig
+	Config Config
 }
 
 // RenderHTML generates the HTML for the form.

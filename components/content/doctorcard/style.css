@@ -1,0 +1,69 @@
+/* Component: DoctorCard */
+
+.doc-panel-item {
+  margin-bottom: 6rem;
+}
+
+.doc-panel-item:last-child {
+  margin-bottom: 0;
+}
+
+.doc-panel-item .img {
+  position: relative;
+  height: 440px;
+  background-color: var(--light-gray);
+  overflow: hidden;
+  align-items: flex-end;
+  max-width: 357px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.doc-panel-item .img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.doc-panel-item .img .info {
+  position: absolute;
+  bottom: -100%;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  flex-direction: column;
+  transition: var(--transition);
+  justify-content: center;
+}
+
+.doc-panel-item:hover .info {
+  bottom: 0;
+}
+
+.doc-panel-item .img .info .lead {
+  text-transform: capitalize;
+  margin-bottom: 0.5rem;
+}
+
+.doc-panel-item .img .info .text-lg {
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .doc-panel-inner {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4rem;
+    margin-top: 8rem;
+  }
+
+  .doc-panel-item {
+    margin-bottom: 0;
+  }
+}
+
+@media (min-width: 992px) {
+  .doc-panel-inner {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

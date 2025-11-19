@@ -1,0 +1,75 @@
+/* Component: PostCard */
+
+.post-item {
+  padding: 1.2rem;
+  box-shadow: var(--box-shadow);
+  margin-bottom: 6rem;
+}
+
+.post-item:last-child {
+  margin-bottom: 0;
+}
+
+.post-item .img {
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.post-item .img img {
+  width: 100%;
+  height: auto;
+  transition: var(--transition);
+}
+
+.post-item:hover .img img {
+  transform: scale(1.05);
+}
+
+.post-item .content {
+  padding: 3rem 2rem 1rem 2rem;
+}
+
+.post-item h4 {
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.post-item .text {
+  padding: 1rem 0;
+  line-height: 1.8;
+}
+
+.post-item .info {
+  display: flex;
+  justify-content: space-between;
+  color: var(--dark-gray);
+  margin-top: 2rem;
+}
+
+.post-item .info .text {
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+.post-item .info i {
+  margin-right: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .posts-inner {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4rem;
+    margin-top: 6rem;
+  }
+
+  .post-item {
+    margin-bottom: 0;
+  }
+}
+
+@media (min-width: 992px) {
+  .posts-inner {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

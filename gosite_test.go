@@ -8,7 +8,7 @@ import (
 
 	"github.com/cdvelop/gosite"
 	"github.com/cdvelop/gosite/components/card"
-	"github.com/cdvelop/gosite/components/form"
+	"github.com/cdvelop/gosite/components/forms/form"
 )
 
 func TestGenerateExample(t *testing.T) {
@@ -60,10 +60,10 @@ func TestGenerateExample(t *testing.T) {
 	contactPage := site.NewPage("Contact Us", "contact.html")
 	contactSection := contactPage.NewSection("Contact Us")
 	contactSection.Add(&form.Form{
-		Config: form.FormConfig{
+		Config: form.Config{
 			Action: "/submit-form",
 			Method: "POST",
-			Fields: []form.FormField{
+			Fields: []form.Field{
 				{Type: "text", Name: "username", Placeholder: "Your Name", Required: true},
 				{Type: "email", Name: "email", Placeholder: "Your Email", Required: true},
 				{Type: "textarea", Name: "message", Placeholder: "Your Message"},

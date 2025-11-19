@@ -1,0 +1,72 @@
+/* Component: PackageCard */
+
+.package-service-item {
+  padding: 3rem 5rem;
+  position: relative;
+  margin-bottom: 12rem;
+}
+
+.package-service-item:last-child {
+  margin-bottom: 0;
+}
+
+.package-service-item .icon {
+  width: 86px;
+  height: 86px;
+  background-color: var(--light-blue-color);
+  border-radius: 2rem;
+  border-bottom-right-radius: 0;
+  color: var(--light-color);
+  position: absolute;
+  top: -43px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.package-service-item .icon i {
+  transform: rotate(-45deg);
+}
+
+.package-service-item h3 {
+  opacity: 0.7;
+  margin: 8rem 0 4rem 0;
+  text-align: center;
+}
+
+.package-service-item .text-sm {
+  color: var(--dark-gray);
+  text-align: center;
+}
+
+.package-service-item .btn {
+  margin: 4rem auto;
+  display: block;
+  text-align: center;
+  width: fit-content;
+}
+
+@media (min-width: 768px) {
+  .package-service-inner {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6rem;
+    margin-top: 14rem;
+  }
+
+  .package-service-item {
+    margin-bottom: 6rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .package-service-inner {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .package-service-item {
+    margin-bottom: 0;
+  }
+}

@@ -1,0 +1,138 @@
+/* Component: Footer */
+
+.footer {
+  background-color: var(--dark-color);
+  padding: 6rem 0 0 0;
+}
+
+.footer-item {
+  margin-bottom: 6rem;
+}
+
+.footer-item:last-child {
+  margin-bottom: 0;
+}
+
+.footer-head {
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 2.4rem;
+  margin-bottom: 4rem;
+}
+
+.footer-item .icon {
+  width: 120px;
+  margin: auto;
+}
+
+.footer-item .icon img {
+  width: 100%;
+}
+
+.footer-item .text {
+  padding: 3rem 0;
+  max-width: 500px;
+  margin-right: auto;
+  margin-left: auto;
+  line-height: 1.8;
+}
+
+.footer-item address {
+  font-size: 1.5rem;
+  font-style: normal;
+  line-height: 1.8;
+}
+
+.footer-item .tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.footer-item .tags-list li {
+  padding: 0.5rem 1rem;
+  background-color: rgb(58, 58, 58);
+  border-radius: 0.4rem;
+}
+
+.footer-item ul {
+  list-style: none;
+}
+
+.footer-item a {
+  margin-bottom: 1rem;
+  display: inline-block;
+  transition: var(--transition);
+}
+
+.footer-item a:hover {
+  color: var(--dark-gray);
+}
+
+.footer-item:last-child .text {
+  padding-top: 0;
+}
+
+.footer-item .appointment-info li {
+  margin: 1rem 0;
+}
+
+.footer-item .appointment-info li i {
+  margin-right: 1rem;
+}
+
+.footer-links {
+  border-top: 2px solid var(--dark-gray);
+  padding: 4.5rem 0;
+}
+
+.footer-links ul {
+  display: flex;
+  justify-content: center;
+  gap: 2.4rem;
+  list-style: none;
+}
+
+.footer-links li a {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--light-color);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-links li a:hover {
+  background-color: var(--light-color);
+  color: var(--fros-blue-color);
+}
+
+@media (min-width: 768px) {
+  .footer-inner {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4rem;
+  }
+
+  .footer-item {
+    margin-bottom: 4rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .footer-inner {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .footer-item {
+    margin-bottom: 0;
+  }
+
+  .footer-item .icon,
+  .footer-item .text {
+    margin-left: 0;
+  }
+}

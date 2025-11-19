@@ -1,0 +1,141 @@
+/* Component: Navbar */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 3.2rem 0;
+  z-index: 999;
+}
+
+.navbar .container {
+  justify-content: space-between;
+}
+
+.navbar-brand img {
+  width: 168px;
+}
+
+.navbar-show-btn, .navbar-hide-btn {
+  background-color: transparent;
+  width: 30px;
+  transition: var(--transition);
+}
+
+button[class ^= navbar]:hover {
+  transform: scale(1.1);
+}
+
+.navbar-collapse {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  padding: 8rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: -3px 0 10px 4px rgba(0, 0, 0, 0.1);
+  transform: translateX(110%);
+  transition: var(--transition);
+  z-index: 1000;
+}
+
+.navbar-show {
+  transform: translateX(0);
+}
+
+.navbar-hide-btn {
+  position: absolute;
+  right: 2rem;
+  top: 4.5rem;
+}
+
+.nav-item {
+  margin: 1.4rem 0;
+}
+
+.nav-link {
+  opacity: 0.8;
+  font-weight: 600;
+  transition: var(--transition);
+  display: inline-block;
+}
+
+.nav-link:hover {
+  opacity: 1;
+  color: var(--fros-blue-color);
+  transform: translateX(10px);
+}
+
+.search-bar {
+  margin-top: 2rem;
+}
+
+.search-bar-box {
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--light-gray);
+  border-radius: 1.9rem;
+  padding: 0 1.5rem;
+}
+
+.search-icon {
+  display: block;
+  width: 27px;
+  margin-right: 1rem;
+}
+
+.search-control {
+  height: 27px;
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 0 1.5rem;
+}
+
+.search-control::placeholder {
+  color: var(--light-gray);
+}
+
+/* Responsive: Desktop */
+@media (min-width: 1200px) {
+  .navbar-show-btn, .navbar-hide-btn {
+    display: none;
+  }
+
+  .navbar-collapse {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    flex-direction: row;
+    box-shadow: none;
+    transform: translateX(0);
+    background-color: transparent !important;
+  }
+
+  .navbar-nav {
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-item {
+    margin: 0 1rem;
+  }
+
+  .nav-link {
+    color: var(--light-color);
+  }
+
+  .search-bar {
+    margin-top: 0;
+    margin-left: 2rem;
+  }
+
+  .search-icon img {
+    content: url("images/search-icon.png");
+  }
+}

@@ -1,0 +1,78 @@
+/* Component: Hero */
+
+.header {
+  min-height: 100vh;
+}
+
+.header-inner {
+  padding-top: 16rem;
+}
+
+.header-inner-left h1 {
+  font-size: 4rem;
+  font-weight: 300;
+  margin-bottom: 0;
+}
+
+.header-inner-left h1 span {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.header-inner-left .lead {
+  opacity: 0.9;
+}
+
+.header-inner-left .text {
+  margin: 5.8rem 0;
+  max-width: 500px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.header-inner-left .btn-group {
+  justify-content: center;
+}
+
+.header-inner-right {
+  margin-top: 4rem;
+}
+
+.header-inner-right img {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Responsive: Desktop */
+@media (min-width: 992px) {
+  .header-inner {
+    padding-top: 20rem;
+  }
+
+  .header-inner .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 4rem;
+  }
+
+  .header-inner-left {
+    text-align: left;
+  }
+
+  .header-inner-left h1 {
+    font-size: 5rem;
+  }
+
+  .header-inner-left .text {
+    margin-left: 0;
+  }
+
+  .header-inner-left .btn-group {
+    justify-content: flex-start;
+  }
+
+  .header-inner-right {
+    margin-top: 0;
+  }
+}
